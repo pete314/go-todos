@@ -14,9 +14,13 @@ The scripts requires the following application to be installed in order to run:
 ## Script execution
 
 _Windows_ :
+
 1. Open command prompt in the location where project should be saved
+
 2. execute "start create_dev_structure.bat"
 
 _nix*_:
+
 1. Open shell in directory where the porject should be saved
+
 2. execute "sudo chmod +x create_dev_structure.sh && sudo sh create_dev_structure.sh"
