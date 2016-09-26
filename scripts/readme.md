@@ -1,5 +1,32 @@
 # Introduction
 The scripts in this folder are helping to setup the development and runtime environment for the current repository.
+After script execution the project should have the folder strcuture suggested by google on [Golang packaging](https://golang.org/doc/code.html)
+
+```
+bin/
+    runner                          # command executable
+pkg/
+    linux_amd64/
+        github.com/golang/example/
+            stringutil.a           # package object
+src/
+    github.com/golang/example/
+        .git/                      # Git repository metadata
+	hello/
+	    hello.go               # command source
+	outyet/
+	    main.go                # command source
+	    main_test.go           # test source
+	stringutil/
+	    reverse.go             # package source
+	    reverse_test.go        # test source
+    golang.org/x/image/
+        .git/                      # Git repository metadata
+	bmp/
+	    reader.go              # package source
+	    writer.go              # package source
+    ... (many more repositories and packages omitted) ...
+```
 
 ## Dependencies
 The scripts requires the following application to be installed in order to run:
