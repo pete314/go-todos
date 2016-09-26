@@ -22,9 +22,12 @@ echo %~dp0
 :: Grab all dependencies
 :: should add all depe
 SET sources[0]="github.com/gorilla/mux"
+SET sources[1]="gopkg.in/mgo.v2"
+SET sources[1]="github.com/stretchr/graceful"
+
 
 for /F "tokens=2 delims==" %%s in ('set sources[') do go get %%s
 
 :: Run the UI
-cd src\go-todos\ToDoAppFrontEnd\WebContent
+cd src\go-todos\WebContent
 http-server -o
