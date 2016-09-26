@@ -8,17 +8,25 @@ app.config(function($routeProvider){
 	.when('/', { 
 		templateUrl: 'Login.html'
 	})
+	.when('/dashboard', { 
+		templateUrl: 'Dashboard.html'
+	})
 	.otherwise({
 		redirectTo: '/'
 	});
 	
 });
 
-
-
 app.controller('loginController', function($scope) {
 	
 	//controller for login.html, has scope for that page
+	//do stuff in here
+	
+});
+
+app.controller('dashboardController', function($scope) {
+	
+	//controller for dashboard.html, has scope for that page
 	//do stuff in here
 	
 });

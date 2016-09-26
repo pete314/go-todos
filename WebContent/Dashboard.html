@@ -1,0 +1,70 @@
+<!--Dashboard Controller Area-->
+<div data-ng-controller="dashboardController">
+<nav id="nav" class="navbar navbar-dark navbar-static-top">
+	<div class="container">
+		<div class="navbar-header">
+		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNavbar" aria-expanded="true" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span id="menuToggle" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
+       </button>
+		<a id="logo" class="navbar-brand" href="">Task Manager</a>
+		</div>
+		<div id="mainNavbar" class="navbar-collapse collapse in" aria-expanded="true">
+         <ul class="nav navbar-nav navbar-right">
+          <li><a id="glyphicon" class="glyphicon glyphicon glyphicon-home" href="#"></a></li>
+         <li><a id="glyphicon" class="glyphicon glyphicon-list-alt" href="#"></a></li>
+         <li><a id="glyphicon" class="glyphicon glyphicon-user" href="#"></a></li>
+          <li><a id="glyphicon" class="glyphicon glyphicon-exclamation-sign" href="#"></a></li>
+           <li><a id="glyphicon" class="glyphicon glyphicon-log-in" href="#"></a></li>
+         </ul>
+	   </div>
+	</div>
+</nav>
+
+<!--Jumbotron with two columns-->
+<div class="jumbotron" style="background-color:#EDF2FA; height:75vh;">
+	<div class="container">
+  	  <div class="row">
+        <div class="col-md-6">
+          <form class="form-horizontal">
+			<div class="container-fluid">
+			<br>
+      			<div class="form-group">
+          			<div class="col-md-6">
+           			<input type="text" placeholder="Input task name here" data-ng-model="taskName" class="form-control">
+          			</div>
+      			</div>
+      			<div class="form-group">
+          			<div class="col-md-12">
+           			<textarea class="form-control" placeholder="Input task decription here" data-ng-model="taskDescription" rows="8" cols="50"></textarea>
+          			</div>
+      			</div>
+      			<div class="form-group">
+          			<div class="col-md-4">
+           			<input style="background-color: #327BF0; color:white;" type="button" value="Add New Task" class="form-control" data-ng-click="addNewTask()">
+          			</div>
+      			</div>
+      	  </div>
+		</form>
+       </div>
+       <div class="col-md-6">
+          <center><h2>Task List Area</h2></center>
+          <p>Generated on the fly, can use ng-repeat here</p>
+       </div>
+     </div>
+   </div>
+</div>
+
+<!--Line across page to separate the form from the footer-->
+<br>
+<hr id="footerLine">
+
+<!--A simple page footer-->
+<footer style="postion:absolute; bottom:0; height:10px;">
+<h3 id="signupInputLabel">Copyright 2016 GMIT </h3>
+</footer>
+</div>
+
+

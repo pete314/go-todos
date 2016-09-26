@@ -1,16 +1,16 @@
 <!--Login Controller Area-->
 <!--First Part is the navigation bar-->
 <div data-ng-controller="loginController">
-<nav class="navbar navbar-dark navbar-fixed-top" style="background-color: #327BF0;">
+<nav id="nav" class="navbar navbar-dark navbar-fixed-top">
 	<div class="container">
 		<div class="navbar-header">
 		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#loginNavbar" aria-expanded="true" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
-            <span style="background-color: #193F7D;" class="icon-bar"></span>
-            <span style="background-color: #193F7D;" class="icon-bar"></span>
-            <span style="background-color: #193F7D;" class="icon-bar"></span>
+            <span id="menuToggle" style="background-color: #193F7D;" class="icon-bar"></span>
+            <span id="menuToggle" style="background-color: #193F7D;" class="icon-bar"></span>
+            <span id="menuToggle" style="background-color: #193F7D;" class="icon-bar"></span>
        </button>
-		<a class="navbar-brand" href="" style="color: white; font-family: Tahoma; font-size: 180%;">Task Manager</a>
+		<a id="logo" class="navbar-brand" href="#">Task Manager</a>
 		</div>
 		<div id="loginNavbar" class="navbar-collapse collapse in" aria-expanded="true">
 			<form class="navbar-form navbar-right">
@@ -20,7 +20,7 @@
                <div class="form-group">
               <input type="password" placeholder="Password" class="form-control" vk_10db6="subscribed">
               </div>
-            <button type="submit" class="btn btn-success">Sign in</button>
+              <input type="button" value="Sign In" class="btn btn-success" data-ng-click="login()">
           </form>
 		</div>
 	</div>
@@ -49,7 +49,7 @@
       </div>
   	</div>
   	<br>
-  	<p><a class="btn bg-primary btn-lg" href="" role="button" style="background-color: #327BF0;">Learn more</a></p>
+  	<p><a class="btn bg-primary btn-lg" href="" role="button" style="background-color:#327BF0;">Learn more</a></p>
 	</div>
 </div>
 
@@ -81,10 +81,6 @@
           </div>
       </div>
       <div class="form-group">
-          <label id="signupInputLabel" class="control-label col-sm-1">Username</label>
-          <div class="col-md-5">
-           <input type="text" placeholder="Username" data-ng-model="username" class="form-control">
-          </div>
           <label id="signupInputLabel" class="control-label col-sm-1">Password</label>
           <div class="col-md-5">
            <input type="text" placeholder="Password" data-ng-model="password" class="form-control">
@@ -96,7 +92,7 @@
 
 <!--Line across page to separate the form from the footer-->
 <br>
-<hr style="width:99%; height:2px; border:none; color:#86AFF0; background-color:#86AFF0;">
+<hr id="footerLine">
 
 <!--A simple page footer-->
 <footer>
