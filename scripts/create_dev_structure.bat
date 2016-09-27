@@ -23,7 +23,8 @@ echo %~dp0
 :: should add all depe
 SET sources[0]="github.com/gorilla/mux"
 SET sources[1]="gopkg.in/mgo.v2"
-SET sources[1]="github.com/stretchr/graceful"
+SET sources[2]="github.com/stretchr/graceful"
+SET sources[3]="github.com/gorilla/mux"
 
 
 for /F "tokens=2 delims==" %%s in ('set sources[') do go get %%s
