@@ -4,7 +4,11 @@
 
 package common
 
-import "strings"
+import (
+	"strings"
+	"net/http"
+	"gopkg.in/mgo.v2"
+)
 
 //Holds the uri path separator char
 const PathSeparator = "/"
@@ -47,4 +51,49 @@ func ParseRequestUri( uriString string ) *Resource{
 	}
 
 	return &Resource{Version: version, Resource: resource, ID: id, Action: action}
+}
+
+//Add CORS (OPTIONS) support for Ajax, AngularJS requests
+func AddCORS(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Expose-Headers", "Location")
+		fn(w, r)
+	}
+}
+
+//Add shared variable support for request
+func AddVars(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		OpenVars(r)
+		defer CloseVars(r)
+		fn(w, r)
+	}
+}
+
+//Add request authentication support
+func AddAuthentication(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !isValidRequest(r.Header.Get("Authorization")) {
+			//respondErr(w, r, http.StatusUnauthorized, "invalid API key")
+			return
+		}
+		fn(w, r)
+	}
+}
+
+//Add database access to request
+func WithDataAccess(db *mgo.Session, fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		thisDb := db.Copy()
+		defer thisDb.Close()
+		SetVar(r, "db", thisDb.DB("todo-api"))
+		fn(w, r)
+	}
+}
+
+//Validate request based on Authorization token
+//@todo: implement JWT - use
+func isValidRequest(accessKey string) bool {
+	return true;
 }

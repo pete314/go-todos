@@ -21,7 +21,7 @@ func main(){
 	log.Println("Dialing mongo", *mongo)
 	db, err := mgo.Dial(*mongo)
 	if err != nil {
-		log.Fatalln("failed to connect to mongo:", err)
+		log.Fatalln("Failed to connect to mongo:", err)
 	}
 	defer db.Close()
 	mux := http.NewServeMux()

@@ -1,6 +1,7 @@
 //Author: Peter Nagy - https://github.com/pete314/go-todos
 //Since: 2016.09.26.
 //Description: Shared variable handler
+//Source: https://www.packtpub.com/application-development/go-building-web-applications
 
 package common
 
