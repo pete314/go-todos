@@ -12,30 +12,3 @@
 	font-family:Trebuchet MS;
 	font-style: oblique;
 }
-
-/*Style of the nav bar area*/
-#nav {
-	background-color:#327BF0; 
-	margin-bottom:-20px;
-}
-
-/*Sets the colour of the lines for the toggle meny button inside the navbar*/
-#menuToglle {
-	background-color:#193F7D;
-}
-
-/*Style of the 'Task Manager header'*/
-#logo {
-	color:white; 
-	font-family:Tahoma; 
-	font-size:180%;
-}
-
-/*Style for the line that separates footer from main area*/
-#footerLine {
-	width:99%; 
-	height:2px; 
-	border:none; 
-	color:#86AFF0; 
-	background-color:#86AFF0;
-}

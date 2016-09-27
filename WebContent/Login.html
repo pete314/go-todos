@@ -6,13 +6,13 @@
 		<div class="navbar-header">
 		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#loginNavbar" aria-expanded="true" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
-            <span id="menuToggle" style="background-color: #193F7D;" class="icon-bar"></span>
-            <span id="menuToggle" style="background-color: #193F7D;" class="icon-bar"></span>
-            <span id="menuToggle" style="background-color: #193F7D;" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
        </button>
 		<a id="logo" class="navbar-brand" href="#">Task Manager</a>
 		</div>
-		<div id="loginNavbar" class="navbar-collapse collapse in" aria-expanded="true">
+		<div id="loginNavbar" class="navbar-collapse collapse" aria-expanded="true">
 			<form class="navbar-form navbar-right">
 			 <div class="form-group">
               <input type="text" placeholder="Username" class="form-control" vk_10db6="subscribed"> 
@@ -90,13 +90,11 @@
   </form>
 </center>
 
-<!--Line across page to separate the form from the footer-->
-<br>
-<hr id="footerLine">
 
+<br><br><br>
 <!--A simple page footer-->
-<footer>
-<h3 id="signupInputLabel">Copyright 2016 GMIT </h3>
+<footer id="footer">
+<center><h3 id="footerLabel">Copyright 2016 GMIT </h3></center>
 </footer>
 </div><!--End loginController scope-->
 
@@ -107,5 +105,3 @@ $( function() {
 		yearRange: '1930:'+new Date().getFullYear(), dateFormat: "yy-mm-dd"});
 });
 </script>
-
-

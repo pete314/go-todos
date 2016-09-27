@@ -5,8 +5,8 @@
 }
 
 /*Sets the colour of the lines for the toggle meny button inside the navbar*/
-#menuToglle {
-	background-color:#193F7D;
+#menuToggle {
+	background-color:white;
 }
 
 /*Style of the nav bar area*/
@@ -22,11 +22,18 @@
 	font-size:180%;
 }
 
-/*Style for the line that separates footer from main area*/
-#footerLine {
+#footerLabel {
+	color:#white;
+	font-weight:bold;
+	font-family:Comic Sans MS;
+}
+
+#footer{
 	width:99%; 
-	height:2px; 
+	height:50px; 
 	border:none; 
-	color:#86AFF0; 
-	background-color:#86AFF0;
+	color:white; 
+	background-color:#327BF0;
+	position: fixed;
+    bottom: 0;
 }

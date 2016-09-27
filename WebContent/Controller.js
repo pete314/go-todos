@@ -11,6 +11,9 @@ app.config(function($routeProvider){
 	.when('/dashboard', { 
 		templateUrl: 'Dashboard.html'
 	})
+	.when('/fandq', { 
+		templateUrl: 'FandQ.html'
+	})
 	.otherwise({
 		redirectTo: '/'
 	});
@@ -27,6 +30,13 @@ app.controller('loginController', function($scope) {
 app.controller('dashboardController', function($scope) {
 	
 	//controller for dashboard.html, has scope for that page
+	//do stuff in here
+	
+});
+
+app.controller('FandQController', function($scope) {
+	
+	//controller for FandQ.html, has scope for that page
 	//do stuff in here
 	
 });
