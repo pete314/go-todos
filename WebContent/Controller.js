@@ -3,7 +3,7 @@ var app = angular.module('MainApp', ['ngRoute']);
 //Provides page routing for the application
 app.config(function($routeProvider){
 	
-	//Root goes to login page, any unknown URLs just redirect to the login page.
+	//Root goes to login page, any unknown URLs just redirect to the login page (done in 'otherwise').
 	$routeProvider
 	.when('/', { 
 		templateUrl: 'Login.html'
@@ -13,6 +13,9 @@ app.config(function($routeProvider){
 	})
 	.when('/fandq', { 
 		templateUrl: 'FandQ.html'
+	})
+	.when('/manageTasks', { 
+		templateUrl: 'ManageTasks.html'
 	})
 	.otherwise({
 		redirectTo: '/'
@@ -37,6 +40,13 @@ app.controller('dashboardController', function($scope) {
 app.controller('FandQController', function($scope) {
 	
 	//controller for FandQ.html, has scope for that page
+	//do stuff in here
+	
+});
+
+app.controller('manageTaskController', function($scope) {
+	
+	//controller for ManageTasks.html, has scope for that page
 	//do stuff in here
 	
 });
