@@ -78,8 +78,44 @@ func handleUserGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Handles create account and login
 func handleUserPost(w http.ResponseWriter, r *http.Request) {
+	db := common.GetVar(r, "db").(*mgo.Database)
+	p := common.ParseRequestUri(mux.Vars(r))
+	var u *User
+	var result interface{}
+	isSuccess := false
 
+	if err := common.DecodeBody(r, &u); err != nil {
+		common.RespondHTTPErr(w, r, http.StatusBadRequest,
+			&common.ErrorBody{Src: "API.USER.REQUEST.PARSE", Code: 400, Desc: "Failed to parse request body"})
+		return
+	}
+
+	//Handle create account
+	if u.Passwordh != "" &&
+		u.Dob != "" &&
+		u.Email != "" &&
+		u.Firstname != "" &&
+		u.Surname != "" {
+		result, isSuccess = CreateUser(db, p, u)
+	} else if u.Passwordh != "" &&
+		u.Email != "" &&
+		u.Firstname == "" &&
+		u.Surname == "" &&
+		u.Dob == ""{
+		result, isSuccess = ValidateUser(db, p, u)
+	}else{
+		result = &common.ErrorBody{Src:"API.USER.REQUEST.VALIDATE", Code: 400, Desc:"Invalid request body"}
+	}
+
+	if !isSuccess {
+		common.RespondHTTPErr(w, r, http.StatusBadRequest,
+			result)
+		return
+	}
+
+	common.Respond(w, r, http.StatusCreated, result)
 }
 
 func handleUserPut(w http.ResponseWriter, r *http.Request) {
