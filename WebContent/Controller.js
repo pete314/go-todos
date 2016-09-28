@@ -11,6 +11,9 @@ app.config(function($routeProvider){
 	.when('/dashboard', { 
 		templateUrl: 'Dashboard.html'
 	})
+	.when('/profile', { 
+		templateUrl: 'Profile.html'
+	})
 	.when('/fandq', { 
 		templateUrl: 'FandQ.html'
 	})
@@ -33,6 +36,13 @@ app.controller('loginController', function($scope) {
 app.controller('dashboardController', function($scope) {
 	
 	//controller for dashboard.html, has scope for that page
+	//do stuff in here
+	
+});
+
+app.controller('profileController', function($scope) {
+	
+	//controller for Profile.html, has scope for that page
 	//do stuff in here
 	
 });
