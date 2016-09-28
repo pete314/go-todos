@@ -60,15 +60,22 @@ func userController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// not found
-	common.RespondHTTPErr(w, r, http.StatusNotFound)
+	common.RespondHTTPErr(w, r, http.StatusNotFound,
+			&common.ErrorBody{Src: "API.USER.ROUTER", Code:404, Desc:"Invalid http request on resource"})
 }
 
 //Get user detail
+//@todo: add cache at this point (serialize entire response)
+//@todo: introduce module cache keys
 func handleUserGet(w http.ResponseWriter, r *http.Request) {
 	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))
-	result := GetUser(db, p)
-	common.Respond(w, r, http.StatusOK, &result)
+	result, isSuccess := GetUser(db, p)
+	if isSuccess{
+		common.Respond(w, r, http.StatusOK, &result)
+	}else{
+		common.RespondHTTPErr(w, r, http.StatusNotFound, &result)
+	}
 }
 
 func handleUserPost(w http.ResponseWriter, r *http.Request) {

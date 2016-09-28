@@ -22,23 +22,23 @@ type User struct {
 }
 
 //Get the user
-func GetUser(db *mgo.Database, res *common.Resource) interface{} {
+//returns the response body and true on success
+func GetUser(db *mgo.Database, res *common.Resource) (interface{}, bool) {
 	c := db.C("user")
 	var q *mgo.Query
 	var result []*User
-	var body interface{}
 
 	if res.ID != "" {
 		// get specific user
 		q = c.FindId(bson.ObjectIdHex(res.ID))
+
+		if err := q.All(&result); err == nil{
+			return &common.SuccessBody{Success:true, Result: &result},
+				true
+		}
 	}
 
-	if err := q.All(&result); err != nil {
-		//@todo: introduce genearalized logging
-		body = &common.ErrorBody{Code:500, Src: "API.USER.GET.DB", Desc: "Could not find results"}
-	}else{
-		body = &common.SuccessBody{Success:true, Result: &result}
-	}
-
-	return body
+	//@todo: introduce genearalized logging
+	return &common.ErrorBody{Code:500, Src: "API.USER.GET.DB", Desc: "Could not find results"},
+		false
 }

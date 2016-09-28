@@ -7,7 +7,6 @@ package common
 import (
 	"encoding/json"
 	"net/http"
-	"fmt"
 )
 
 //Holds the error http body structure
@@ -35,27 +34,15 @@ func EncodeBody(w http.ResponseWriter, r *http.Request, v interface{}) error {
 }
 
 //Create the http response with 200-OK
-func Respond(w http.ResponseWriter, r *http.Request, status int, data interface{},
-) {
+func Respond(w http.ResponseWriter, r *http.Request, status int, data interface{}) {
 	w.WriteHeader(status)
 	if data != nil{
 		EncodeBody(w, r, data)
 	}
 }
 
-//Create http error response with http status code with message
-func RespondErr(w http.ResponseWriter, r *http.Request,
-status int, args ...interface{},
-) {
-	Respond(w, r, status, map[string]interface{}{
-		"error": map[string]interface{}{
-			"message": fmt.Sprint(args...),
-		},
-	})
-}
-
 //Create http error response without body
-func RespondHTTPErr(w http.ResponseWriter, r *http.Request, status int) {
-	RespondErr(w, r, status, http.StatusText(status))
+func RespondHTTPErr(w http.ResponseWriter, r *http.Request, status int, s ...interface{}) {
+	Respond(w, r, status, s)
 }
 
