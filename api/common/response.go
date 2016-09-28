@@ -10,6 +10,24 @@ import (
 	"fmt"
 )
 
+//Holds the error http body structure
+type ErrorBody struct {
+	Src  string
+	Code int
+	Desc string
+}
+
+//Holds the success http body structure
+type SuccessBody struct {
+	Success bool
+	Result  interface{}
+}
+
+//Serialize *Body struct into json
+func SerializeJson(b interface{}) []byte{
+	bodyBytes, _ := json.Marshal(b)
+	return bodyBytes;
+}
 
 //Encode data into JSON
 func EncodeBody(w http.ResponseWriter, r *http.Request, v interface{}) error {
@@ -17,11 +35,10 @@ func EncodeBody(w http.ResponseWriter, r *http.Request, v interface{}) error {
 }
 
 //Create the http response with 200-OK
-func Respond(w http.ResponseWriter, r *http.Request,
-status int, data interface{},
+func Respond(w http.ResponseWriter, r *http.Request, status int, data interface{},
 ) {
 	w.WriteHeader(status)
-	if data != nil {
+	if data != nil{
 		EncodeBody(w, r, data)
 	}
 }

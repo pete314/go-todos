@@ -22,23 +22,23 @@ type User struct {
 }
 
 //Get the user
-//@todo: remove return of password
-//@todo: should serialize response
-//@todo: create general error listener
-func GetUser(db *mgo.Database, res *common.Resource) *User{
+func GetUser(db *mgo.Database, res *common.Resource) interface{} {
 	c := db.C("user")
 	var q *mgo.Query
+	var result []*User
+	var body interface{}
+
 	if res.ID != "" {
 		// get specific user
 		q = c.FindId(bson.ObjectIdHex(res.ID))
-	} else {
-		// get all users
-		q = c.Find(nil)
-	}
-	var result []*User
-	if err := q.All(&result); err != nil {
-		return nil
 	}
 
-	return result
+	if err := q.All(&result); err != nil {
+		//@todo: introduce genearalized logging
+		body = &common.ErrorBody{Code:500, Src: "API.USER.GET.DB", Desc: "Could not find results"}
+	}else{
+		body = &common.SuccessBody{Success:true, Result: &result}
+	}
+
+	return body
 }

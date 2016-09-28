@@ -30,7 +30,8 @@ func AddModuleRouter(mainRouter *mux.Router, db *mgo.Session){
 //Add sub routes with regex to main router
 func addRoute(routeRegex string, mainRouter *mux.Router, db *mgo.Session){
 	rtrTmp := mux.NewRouter()
-	rtrTmp.HandleFunc(routeRegex, common.AddCORS(common.AddVars(common.WithDataAccess(db, common.AddAuthentication(userController)))))
+	rtrTmp.HandleFunc(routeRegex, common.AddDeafultHeaders(common.AddCORS(common.AddVars(common.WithDataAccess(db,
+				common.AddAuthentication(userController))))))
 
 	mainRouter.Handle(routeRegex, rtrTmp)
 }

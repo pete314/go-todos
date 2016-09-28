@@ -15,6 +15,15 @@ type Resource struct {
 	Param 	string
 }
 
+//Add default headers to response
+func AddDeafultHeaders(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Server", "go-todo-api/v0.1")
+		w.Header().Set("Content-Type", "application/json")
+		fn(w, r)
+	}
+}
+
 //Add CORS (OPTIONS) support for Ajax, AngularJS requests
 func AddCORS(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

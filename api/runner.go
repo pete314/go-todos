@@ -18,13 +18,15 @@ func main(){
 	var (
 		addr  = flag.String("addr", ":8080", "endpoint address")
 		mongo = flag.String("mongo", "localhost", "mongodb address")
+		dbname    = flag.String("dbname", "todo-api-data", "database name")
 	)
 	log.Println("Dialing mongo", *mongo)
-	db, err := mgo.Dial(*mongo)
+	db, err := mgo.Dial( *mongo )
 	if err != nil {
 		log.Fatalln("Failed to connect to mongo:", err)
 	}
 	defer db.Close()
+	db.DB(*dbname)
 
 	rtr := mux.NewRouter()
 	user.AddModuleRouter(rtr, db)
