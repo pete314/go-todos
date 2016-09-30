@@ -1,6 +1,7 @@
 //Author: Peter Nagy - https://github.com/pete314/go-todos
 //Since: 2016.09.26.
 //Description: Shared variable handler
+//Source: https://github.com/matryer/goblueprints/tree/master/chapter6/api
 
 package common
 

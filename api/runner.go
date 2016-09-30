@@ -7,27 +7,32 @@ package main
 import (
 	"flag"
 	"log"
-	"net/http"
 	"time"
 	"github.com/stretchr/graceful"
 	"gopkg.in/mgo.v2"
+	"./user"
+	"github.com/gorilla/mux"
 )
 
 func main(){
 	var (
 		addr  = flag.String("addr", ":8080", "endpoint address")
 		mongo = flag.String("mongo", "localhost", "mongodb address")
+		dbname    = flag.String("dbname", "todo-api", "database name")
 	)
 	log.Println("Dialing mongo", *mongo)
-	db, err := mgo.Dial(*mongo)
+	db, err := mgo.Dial( *mongo )
 	if err != nil {
-		log.Fatalln("failed to connect to mongo:", err)
+		log.Fatalln("Failed to connect to mongo:", err)
 	}
 	defer db.Close()
-	mux := http.NewServeMux()
+	db.DB(*dbname)
+
+	rtr := mux.NewRouter()
+	user.AddModuleRouter(rtr, db)
 
 	log.Println("Starting web server on", *addr)
-	graceful.Run(*addr, 1*time.Second, mux)
+	graceful.Run(*addr, 1*time.Second, rtr)
 	log.Println("Stopping...")
 
 }
