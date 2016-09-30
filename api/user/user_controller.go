@@ -5,10 +5,12 @@
 package user
 
 import (
+	valid "github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 	"../common"
 	"net/http"
+	"gopkg.in/mgo.v2/bson"
 )
 
 //Module controller constants
@@ -101,15 +103,15 @@ func handleUserPost(w http.ResponseWriter, r *http.Request) {
 	//Handle create account
 	//@todo: try generalize field validation
 	if p.Action == "new" &&
-		u.Passwordh != "" &&
+		u.Password != "" && len(u.Password) > 5 &&
 		u.Dob != "" &&
-		u.Email != "" &&
+		u.Email != "" && valid.IsEmail(u.Email) &&
 		u.Firstname != "" &&
 		u.Surname != "" {
 		result, isSuccess = CreateUser(db, p, u)
 	} else if p.Action == "login" &&
-		u.Passwordh != "" &&
-		u.Email != "" &&
+		u.Password != "" &&
+		u.Email != "" && valid.IsEmail(u.Email) &&
 		u.Firstname == "" &&
 		u.Surname == "" &&
 		u.Dob == ""{
@@ -127,13 +129,92 @@ func handleUserPost(w http.ResponseWriter, r *http.Request) {
 	common.Respond(w, r, http.StatusCreated, result)
 }
 
+//Update all user fields
 func handleUserPut(w http.ResponseWriter, r *http.Request) {
+	db := common.GetVar(r, "db").(*mgo.Database)
+	p := common.ParseRequestUri(mux.Vars(r))
+	var u *User
 
+	if err := common.DecodeBody(r, &u); err != nil {
+		common.RespondHTTPErr(w, r, http.StatusBadRequest,
+			&common.ErrorBody{Src: "API.USER.REQUEST.PARSE", Code: http.StatusBadRequest, Desc: "Failed to parse request body"})
+		return
+	}
+
+
+	if p.Action == "update" && p.ID != "" &&
+		u.Password != "" && len(u.Password) > 5 &&
+		u.Dob != "" &&
+		u.Email != "" && valid.IsEmail(u.Email) &&
+		u.Firstname != "" &&
+		u.Surname != "" {
+			u.ID = bson.ObjectIdHex(p.ID)
+
+			if result, isSuccess := UpdateUser(db, u); isSuccess{
+				common.Respond(w, r, http.StatusAccepted, &result)
+			}else{
+				common.RespondHTTPErr(w, r, http.StatusBadRequest, &result)
+			}
+			return
+	}
+
+	common.RespondHTTPErr(w, r, http.StatusBadRequest,
+		&common.ErrorBody{Src:"API.USER.REQUEST.VALIDATE", Code: 400, Desc:"Invalid request body"})
 }
 
+//User patch can update single field (used for update input field js(onFocusLost))
 func handleUserPatch(w http.ResponseWriter, r *http.Request) {
-	//validate the key sent with request
-	//validate
+	db := common.GetVar(r, "db").(*mgo.Database)
+	p := common.ParseRequestUri(mux.Vars(r))
+	var u *User
+
+	if err := common.DecodeBody(r, &u); err != nil {
+		common.RespondHTTPErr(w, r, http.StatusBadRequest,
+			&common.ErrorBody{Src: "API.USER.REQUEST.PARSE", Code: http.StatusBadRequest, Desc: "Failed to parse request body"})
+		return
+	}
+
+	vField, vValue, isValid := checkFiledValue(u, p.Param)
+	if isValid{
+		if result, isSuccess := EditUser(db, p.ID, vField, vValue); isSuccess{
+			common.Respond(w, r, http.StatusAccepted, &result)
+		}else{
+			common.RespondHTTPErr(w, r, http.StatusBadRequest, &result)
+		}
+		return
+	}
+
+	common.RespondHTTPErr(w, r, http.StatusBadRequest,
+		&common.ErrorBody{Src: "API.USER.REQUEST.VALIDATION", Code: http.StatusBadRequest, Desc: "Validation error"})
+	return
+}
+
+//Check fields parsed from body
+func checkFiledValue(u *User, f string) (string, string, bool){
+	switch f{
+	case "password":
+		if u.Password != "" && len(u.Password) > 5{
+			return "password", u.Password, true
+		}
+	case "email":
+		if valid.IsEmail(u.Email){
+			return "email", u.Email, true
+		}
+	case "dob":
+		if u.Dob != "" {
+			return "dob", u.Dob, true
+		}
+	case "fistname":
+		if u.Firstname != "" {
+			return "firstname", u.Firstname, true
+		}
+	case "surname":
+		if u.Surname != "" {
+			return "surname", u.Surname, true
+		}
+	}
+
+	return "", "", false
 }
 
 //Handle user delete account
