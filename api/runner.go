@@ -18,7 +18,7 @@ func main(){
 	var (
 		addr  = flag.String("addr", ":8080", "endpoint address")
 		mongo = flag.String("mongo", "localhost", "mongodb address")
-		dbname    = flag.String("dbname", "todo-api-data", "database name")
+		dbname    = flag.String("dbname", "todo-api", "database name")
 	)
 	log.Println("Dialing mongo", *mongo)
 	db, err := mgo.Dial( *mongo )

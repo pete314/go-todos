@@ -10,7 +10,6 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
-	"fmt"
 )
 
 const (
@@ -20,13 +19,14 @@ const (
 type User struct {
 	ID        bson.ObjectId `json:"id" bson:"_id"`
 	Email     string        `json:"email" bson:"email"`
-	Passwordh string        `json:"password" bson:"password"`
+	Passwordh string        `json:"password,omitempty" bson:"password"`
 	Firstname string        `json:"firstname" bson:"firstname"`
 	Surname   string        `json:"surname" bson:"surname"`
 	Dob       string        `json:"dob" bson:"dob"`
 	Created   time.Time     `json:"created" bson:"created"`
 	Updated   time.Time     `json:"updated" bson:"updated"`
 }
+
 
 //Get the user
 //returns the response body and true on success
@@ -40,7 +40,7 @@ func GetUser(db *mgo.Database, res *common.Resource) (interface{}, bool) {
 		q = c.FindId(bson.ObjectIdHex(res.ID))
 
 		if err := q.One(&result); err == nil {
-
+			result.Passwordh = "" // don't send the password hash
 			return &common.SuccessBody{Success: true, Result: &result},
 				true
 		}
@@ -56,10 +56,23 @@ func CreateUser(db *mgo.Database, res *common.Resource, u *User) (interface{}, b
 	c := db.C(dbCollection)
 	pBytes, _ := bcrypt.GenerateFromPassword([]byte(u.Passwordh), 10)
 
+	index := mgo.Index{
+		Key:        []string{"email"},
+		Unique:     true,
+		DropDups:   true,
+		Background: true,
+		Sparse:     true,
+	}
+	err := c.EnsureIndex(index)
+	if err != nil {
+		return &common.ErrorBody{Src: "API.USER.CREATE.DB", Code: 500, Desc: "Error while storing user, index"},
+			false
+	}
+
 	u.ID = bson.NewObjectId()
-	u.Passwordh = string(pBytes[:len(pBytes)-1])
-	u.Created = bson.Now()
-	u.Updated = bson.Now()
+	u.Passwordh = string(pBytes[:])
+	u.Created = time.Now()
+	u.Updated = time.Now()
 
 	if err := c.Insert(u); err == nil {
 		return &common.SuccessBody{Success: true, Result: "v0.1/user/get/" + u.ID.Hex()},
@@ -70,6 +83,8 @@ func CreateUser(db *mgo.Database, res *common.Resource, u *User) (interface{}, b
 	}
 }
 
+
+
 //Validate user login attempt
 func ValidateUser(db *mgo.Database, res *common.Resource, u *User) (interface{}, bool) {
 	c := db.C(dbCollection)
@@ -77,16 +92,13 @@ func ValidateUser(db *mgo.Database, res *common.Resource, u *User) (interface{},
 	var foundUser *User
 
 	// get specific user
-	q = c.Find(bson.M{"email": u.Email})
+	q = c.Find(bson.M{"email": u.Email}).Select(bson.M{"_id": 1, "email": 1, "password": 1})
 
 	if err := q.One(&foundUser); err == nil {
-		fmt.Println(&foundUser.Passwordh)
 		if invalidHash := bcrypt.CompareHashAndPassword([]byte(foundUser.Passwordh),
 				[]byte(u.Passwordh)); invalidHash == nil {
-			return &common.SuccessBody{Success: true, Result: &foundUser},
+			return &common.SuccessBody{Success: true, Result: "v0.1/user/get/" + foundUser.ID.Hex()},
 				true
-		}else{
-			fmt.Println(invalidHash)
 		}
 	}
 
@@ -94,3 +106,18 @@ func ValidateUser(db *mgo.Database, res *common.Resource, u *User) (interface{},
 					Desc: "User not found, or invalid password"},
 		false
 }
+
+//Delete user profile entry from database
+func DeleteUser(db *mgo.Database, userId string) (interface{}, bool) {
+	c := db.C(dbCollection)
+
+	if err := c.Remove(bson.M{"_id": bson.ObjectIdHex(userId)}); err == nil {
+		return &common.SuccessBody{Success: true, Result: true},
+			true
+	}
+
+	return &common.ErrorBody{Src: "API.USER.REQUEST.VALIDATE", Code: 404,
+		Desc: "User not found, did not delete user"},
+		false
+}
+

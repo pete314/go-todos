@@ -70,8 +70,14 @@ func userController(w http.ResponseWriter, r *http.Request) {
 func handleUserGet(w http.ResponseWriter, r *http.Request) {
 	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))
-	result, isSuccess := GetUser(db, p)
-	if isSuccess{
+	if p.Action != "get" {
+		common.RespondHTTPErr(w, r, http.StatusBadRequest,
+			&common.ErrorBody{Src: "API.USER.REQUEST.VALIDATION", Code: 400,
+				Desc: "Invalid request type GET>>get"})
+		return
+	}
+
+	if result, isSuccess := GetUser(db, p); isSuccess{
 		common.Respond(w, r, http.StatusOK, &result)
 	}else{
 		common.RespondHTTPErr(w, r, http.StatusNotFound, &result)
@@ -93,13 +99,16 @@ func handleUserPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Handle create account
-	if u.Passwordh != "" &&
+	//@todo: try generalize field validation
+	if p.Action == "new" &&
+		u.Passwordh != "" &&
 		u.Dob != "" &&
 		u.Email != "" &&
 		u.Firstname != "" &&
 		u.Surname != "" {
 		result, isSuccess = CreateUser(db, p, u)
-	} else if u.Passwordh != "" &&
+	} else if p.Action == "login" &&
+		u.Passwordh != "" &&
 		u.Email != "" &&
 		u.Firstname == "" &&
 		u.Surname == "" &&
@@ -123,9 +132,22 @@ func handleUserPut(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleUserPatch(w http.ResponseWriter, r *http.Request) {
-
+	//validate the key sent with request
+	//validate
 }
 
+//Handle user delete account
+//@todo: this should be validated(email confirmation) and scheduled only, not direct delete
 func handleUserDelete(w http.ResponseWriter, r *http.Request) {
+	db := common.GetVar(r, "db").(*mgo.Database)
+	p := common.ParseRequestUri(mux.Vars(r))
+	var result interface{}
+	isSuccess := false
 
+	if result, isSuccess = DeleteUser(db, p.ID); !isSuccess{
+		common.RespondHTTPErr(w, r, http.StatusBadRequest,
+			result)
+	}else{
+		common.Respond(w, r, http.StatusCreated, result)
+	}
 }
