@@ -83,8 +83,6 @@ func CreateUser(db *mgo.Database, res *common.Resource, u *User) (interface{}, b
 	}
 }
 
-
-
 //Validate user login attempt
 func ValidateUser(db *mgo.Database, res *common.Resource, u *User) (interface{}, bool) {
 	c := db.C(dbCollection)
@@ -97,6 +95,8 @@ func ValidateUser(db *mgo.Database, res *common.Resource, u *User) (interface{},
 	if err := q.One(&foundUser); err == nil {
 		if invalidHash := bcrypt.CompareHashAndPassword([]byte(foundUser.Password),
 				[]byte(u.Password)); invalidHash == nil {
+			//create token entry in db
+
 			return &common.SuccessBody{Success: true, Result: "v0.1/user/get/" + foundUser.ID.Hex()},
 				true
 		}
