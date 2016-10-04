@@ -15,10 +15,10 @@
 		<div id="loginNavbar" class="navbar-collapse collapse" aria-expanded="true">
 			<form class="navbar-form navbar-right">
 			 <div class="form-group">
-              <input type="text" placeholder="Username" class="form-control" vk_10db6="subscribed"> 
+              <input type="text" placeholder="Email" data-ng-model="emailLogin" class="form-control" vk_10db6="subscribed"> 
               </div>
                <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control" vk_10db6="subscribed">
+              <input type="password" placeholder="Password" data-ng-model="passwordLogin" class="form-control" vk_10db6="subscribed">
               </div>
               <input type="button" value="Sign In" class="btn btn-success" data-ng-click="login()">
           </form>
@@ -55,18 +55,18 @@
 
 <!--Signup form at the bottom of the page with two columns and six rows-->
 <center>
-<form class="form-horizontal">
+<form class="form-horizontal" id="signupForm">
 <div class="container-fluid">
 	<h1 id="signupHeaderLabel">Sign Up Today</h1>
 	<br>
       <div class="form-group">
           <label id="signupInputLabel" class="control-label col-sm-1">First Name</label>
           <div class="col-md-5">
-           <input type="text" placeholder="First Name" data-ng-model="fName" class="form-control">
+           <input type="text" placeholder="First Name" data-ng-model="firstname" class="form-control">
           </div>
           <label id="signupInputLabel" class="control-label col-sm-1">Last name</label>
           <div class="col-md-5">
-           <input type="text" placeholder="Last Name" data-ng-model="lName" class="form-control">
+           <input type="text" placeholder="Last Name" data-ng-model="surname" class="form-control">
           </div>
       </div>
       
@@ -84,6 +84,9 @@
           <label id="signupInputLabel" class="control-label col-sm-1">Password</label>
           <div class="col-md-5">
            <input type="password" placeholder="Password" data-ng-model="password" class="form-control">
+          </div>
+          <div class="col-md-6">
+          <input type="button" value="Sign Up" class="btn btn-success" class="form-control" data-ng-click="signup()">
           </div>
       </div>
       </div>
