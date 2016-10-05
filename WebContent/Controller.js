@@ -1,4 +1,5 @@
-var app = angular.module('MainApp', ['ngRoute']);
+//Using external package to core angular, Local Storage
+var app = angular.module('MainApp', ['ngRoute','LocalStorageModule']);
 var rootURL = 'https://todo-api.gcraic.com/v0.1/';//All api endpoints start with this base url
 var config = {
         headers : {
@@ -6,18 +7,33 @@ var config = {
         }
     }
 
+//App service contains utility methods for the application, needed by all controllers.
+app.service('appServices', function($location, localStorageService){
+	
+	this.logout = function()
+	{
+		localStorageService.clearAll();			//User is logging out so clear all local storage variables 
+		$location.path('/');					//redirect to root, login page
+	}
+	
+});
+
 //Provides page routing for the application
-app.config(function($routeProvider){
+app.config(function($routeProvider, localStorageServiceProvider){
+	
+	//Config the localStorageServiceProvider to local storage
+	localStorageServiceProvider
+    .setStorageType('localStorage');
 	
 	//Root goes to login page, any unknown URLs just redirect to the login page (done in 'otherwise').
 	$routeProvider
 	.when('/', { 
-		resolve: {//check all is okay before routing the page
-			"check": function($location, $rootScope){
+		resolve: {//resolve basically means do this stuff before the routing and check all is okay
+			"check": function($location, localStorageService){//check means exactly what it says. we 'check' this function
 				
-				if($rootScope.loggedIn)//if user is not logged in
+				if(localStorageService.get("loggedIn") == true)//if your logged in already
 				{
-					$location.path('/dashboard');
+					$location.path('/dashboard');//redirect to dashboard
 				}
 				
 			}//end check
@@ -25,60 +41,74 @@ app.config(function($routeProvider){
 		templateUrl: 'Login.html'
 	})
 	.when('/dashboard', { 
-		resolve: {//check all is okay before routing to dashboard
-			"check": function($location, $rootScope){//check means exactly what it says. we 'check' this function
+		resolve: {//resolve basically means do this stuff before the routing and check all is okay
+			"check": function($location, localStorageService){//check means exactly what it says. we 'check' this function
 				
-				if(!$rootScope.loggedIn)//if the user is not logged in we redirect him/her to the login page
+				if(localStorageService.get("loggedIn") != true)//if your not logged in
 				{
-					$location.path('/');
-				}	
+					$location.path('/');//redirect to login page
+				}
+				
 			}//end check
-		},//end resolve 
+		},//end resolve
 		templateUrl: 'Dashboard.html'
 	})
-	.when('/profile', { 
-		resolve: {//check all is okay before routing to profile
-			"check": function($location, $rootScope){
+	.when('/profile', {
+		resolve: {//resolve basically means do this stuff before the routing and check all is okay
+			"check": function($location, localStorageService){//check means exactly what it says. we 'check' this function
 				
-				if(!$rootScope.loggedIn)
+				if(localStorageService.get("loggedIn") != true)
 				{
 					$location.path('/');
-				}	
+				}
+				
 			}//end check
 		},//end resolve
 		templateUrl: 'Profile.html'
 	})
 	.when('/fandq', {
-		resolve: {//check all is okay before routing to fandq
-			"check": function($location, $rootScope){//check means exactly what it says. we 'check' this function
+		resolve: {//resolve basically means do this stuff before the routing and check all is okay
+			"check": function($location, localStorageService){//check means exactly what it says. we 'check' this function
 				
-				if(!$rootScope.loggedIn)
+				if(localStorageService.get("loggedIn") != true)
 				{
 					$location.path('/');
-				}	
+				}
+				
 			}//end check
 		},//end resolve
 		templateUrl: 'FandQ.html'
 	})
 	.when('/manageTasks', { 
-		resolve: {//check all is okay before routing to manageTasks
-			"check": function($location, $rootScope){//check means exactly what it says. we 'check' this function
+		resolve: {//resolve basically means do this stuff before the routing and check all is okay
+			"check": function($location, localStorageService){//check means exactly what it says. we 'check' this function
 				
-				if(!$rootScope.loggedIn)
+				if(localStorageService.get("loggedIn") != true)
 				{
 					$location.path('/');
-				}	
+				}
+				
 			}//end check
 		},//end resolve
 		templateUrl: 'ManageTasks.html'
 	})
 	.otherwise({
+		resolve: {//resolve basically means do this stuff before the routing and check all is okay
+			"check": function($location, localStorageService){//check means exactly what it says. we 'check' this function
+				
+				if(localStorageService.get("loggedIn") != true)
+				{
+					$location.path('/');
+				}
+				
+			}//end check
+		},//end resolve
 		redirectTo: '/'
 	});
 });
 
-//Controller for the login page of the application
-app.controller('loginController', function($scope, $http, $location, $rootScope) {
+//Controller for login page of the application, has scope for that entire page
+app.controller('loginController', function($scope, $http, $location, localStorageService) {
 	
 	//Event for the sign up button (new user)
 	$scope.signup = function(){
@@ -88,15 +118,14 @@ app.controller('loginController', function($scope, $http, $location, $rootScope)
 		var user = new User($scope.firstname, $scope.surname, $scope.dob, $scope.password, $scope.email);
 		var jsonNewUser = angular.toJson(user);
 		
-		//Post the data to the url endpoint user/new and add header of Content-Type = application/json (in config)
+		//Post the data to the url endpoint user/new and add header of Content-Type=application/json(in config at file top)
 		$http.post(rootURL + endpointNewUser, jsonNewUser, config)
 		.then(
 			function(response){//if success
-				$location.path('/dashboard');//redirect to dashboard
-				$rootScope.loggedIn = true;  //set global logged in variable to true.
+				logUserIn(response);		//log user in, defined at bottom of this controller
 			}, 
 			function(response){//if error
-				console.log(response);	//just log it for now	
+				console.log(response);		//just log it for now	
 			}
 		);	
 	}//end signup event
@@ -111,41 +140,60 @@ app.controller('loginController', function($scope, $http, $location, $rootScope)
 		$http.post(rootURL + endpointLoginUser, jsonLoginUser, config)
 		.then(
 			function(response){//if success
-				$location.path('/dashboard');//redirect to dashboard
-				$rootScope.loggedIn = true;  //set global logged in variable to true.
+				logUserIn(response);			//log user in, defined at bottom of this controller
 			}, 
 			function(response){//if error
-				console.log(response);//just log it for now		
+				console.log(response);			//just log it for now		
 			}
 		);	
 	}//end login event
+	
+	function logUserIn(response)
+	{
+		var responseResult = response.data.Result;		//Get result url from response key value 'Result'
+		var userId = responseResult.split('/')[3];		//Get the users id from it
+		localStorageService.set("userID", userId);		//Set localStorageService variables
+		localStorageService.set("loggedIn", true);
+		$location.path('/dashboard');					//redirect to dashboard
+	}
 });
 
-app.controller('dashboardController', function($scope) {
+//Controller for dashboard page of the application, has scope for that entire page, passing in custom service as parameter
+app.controller('dashboardController', function($scope, appServices) {
 	
-	//controller for dashboard.html, has scope for that page
-	//do stuff in here
+	$scope.logout = function()
+	{
+		appServices.logout();//call the custom app services logout function
+	}
+});
+
+//Controller for profile page of the application, has scope for that entire page, passing in custom service as parameter
+app.controller('profileController', function($scope, appServices) {
+	
+	$scope.logout = function()
+	{
+		appServices.logout();
+	}
 	
 });
 
-app.controller('profileController', function($scope) {
+//Controller for fandq page of the application, has scope for that entire page, passing in custom service as parameter
+app.controller('FandQController', function($scope, appServices) {
 	
-	//controller for Profile.html, has scope for that page
-	//do stuff in here
-	
-});
-
-app.controller('FandQController', function($scope) {
-	
-	//controller for FandQ.html, has scope for that page
-	//do stuff in here
+	$scope.logout = function()
+	{
+		appServices.logout();
+	}
 	
 });
 
-app.controller('manageTaskController', function($scope) {
+//Controller for manage tasks page of the application, has scope for that entire page, passing in custom service as parameter
+app.controller('manageTaskController', function($scope, appServices) {
 	
-	//controller for ManageTasks.html, has scope for that page
-	//do stuff in here
+	$scope.logout = function()
+	{
+		appServices.logout();
+	}
 	
 });
 
