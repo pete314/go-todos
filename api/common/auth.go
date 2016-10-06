@@ -8,7 +8,6 @@ import (
 	"time"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"../user"
 	"crypto/sha256"
 	"crypto/hmac"
 	"math/rand"
@@ -44,7 +43,7 @@ type OauthModel struct{
 
 func ValidateToken(db *mgo.Database, token string, oauthmodel *OauthModel) (interface{}, bool){
 	tokenBits := strings.Split(strings.TrimSpace(token), " ")
-	if len(tokenBits) == 2 && strings.Compare(tokenBits[0], "Bearer"){
+	if len(tokenBits) == 2 && strings.Compare(tokenBits[0], string("Bearer")) == 0{
 		if entry, isAvailable := getToken(db, tokenBits[1]); isAvailable {
 			return entry, true
 		}
@@ -69,18 +68,18 @@ func ValidateTokenHmac(db *mgo.Database, token string, payload string) (string, 
 }
 
 //Compute the hmac of the payload or url
-func computeHmac256(payload string, secret string) string {
-	key := []byte(secret)
-	h := hmac.New(sha256.New, key)
+func computeHmac256(payload string, secret []byte) string {
+	h := hmac.New(sha256.New, secret)
 	h.Write([]byte(payload))
-	return base64.StdEncoding.EncodeToString(h.Sum(nil))
+	return string(base64.StdEncoding.EncodeToString(h.Sum(nil))[:])
 }
 
-func CreateUserToken(db *mgo.Database, user *user.User) string{
+func CreateUserToken(db *mgo.Database, userId bson.ObjectId) string{
 	c := db.C(dbCollection)
-	var rndb [32]byte
+	rndb := make([]byte, 32)
 	rand.Read(rndb)
-
+	hash := sha256.New()
+	hash.Write(rndb)
 
 	index := mgo.Index{
 		Key:        []string{"_tokenId", "_userId"},
@@ -96,9 +95,9 @@ func CreateUserToken(db *mgo.Database, user *user.User) string{
 	}
 
 	entry := &AuthModel{
-		UserID: user.ID,
-		TokenID: hex.EncodeToString(sha256.Sum256(rndb)),
-		Scope: "full",//only supported
+		UserID: userId,
+		TokenID: hex.EncodeToString(hash.Sum(nil)),
+		Scope: 0,//only supported
 		TTL: time.Now().Add(3600*time.Second),
 		Created: time.Now()}
 
@@ -109,7 +108,7 @@ func CreateUserToken(db *mgo.Database, user *user.User) string{
 }
 
 //Get token
-func getToken(db *mgo.Database, tokenId string) (AuthModel, bool){
+func getToken(db *mgo.Database, tokenId string) (*AuthModel, bool){
 	c := db.C(dbCollection)
 	var entry *AuthModel
 

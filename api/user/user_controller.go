@@ -33,7 +33,7 @@ func AddModuleRouter(mainRouter *mux.Router, db *mgo.Session){
 func addRoute(routeRegex string, mainRouter *mux.Router, db *mgo.Session){
 	rtrTmp := mux.NewRouter()
 	rtrTmp.HandleFunc(routeRegex, common.AddDeafultHeaders(common.AddCORS(common.AddVars(common.WithDataAccess(db,
-				common.AddAuthentication(userController))))))
+				common.AddAuthentication(db, userController))))))
 
 	mainRouter.Handle(routeRegex, rtrTmp)
 }

@@ -47,12 +47,24 @@ func AddVars(fn http.HandlerFunc) http.HandlerFunc {
 //Add request authentication support
 func AddAuthentication(db *mgo.Session, fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if userId, isValid := isValidRequest(db, r.Header.Get("Authorization"), r.RequestURI, r.Body); !isValid {
+		var authM *OauthModel
+
+		//@todo: remove this duplicate
+		thisDb := db.Copy()
+		defer thisDb.Close()
+		d := thisDb.DB("todo-api")
+		if err := DecodeBody(r, &authM); err == nil {
+			if userId, isValid := isValidRequest(d, r.Header.Get("Authorization"), r.RequestURI, authM); !isValid {
+				RespondHTTPErr(w, r, http.StatusUnauthorized,
+					ErrorBody{Src:"API.AUTHENTICATION", Code: 401, Desc: "Invalid authentication"})
+				return
+			} else {
+				SetVar(r, "userid", userId)
+			}
+		}else{
 			RespondHTTPErr(w, r, http.StatusUnauthorized,
 				ErrorBody{Src:"API.AUTHENTICATION", Code: 401, Desc: "Invalid authentication"})
 			return
-		}else{
-			SetVar(r, "userid", userId)
 		}
 		fn(w, r)
 	}
@@ -70,17 +82,17 @@ func WithDataAccess(db *mgo.Session, fn http.HandlerFunc) http.HandlerFunc {
 
 //Validate request based on Authorization token
 //@todo: implement JWT - use
-func isValidRequest(db *mgo.Session, accessKey string, uriStr string, bodyString string) (string, bool) {
+func isValidRequest(db *mgo.Database, accessKey string, uriStr string, body *OauthModel) (interface{}, bool) {
 	//Do not validate login or register request
 	if strings.Contains(uriStr, "user/login") || strings.Contains(uriStr, "user/new"){
-		return "", true
+		return AuthModel{}, true
 	}
 
-	if bodyString == nil && accessKey != nil{
-		return ValidateToken(db, accessKey, uriStr)
-	}else if bodyString != nil && accessKey != nil{
-		return ValidateToken(db, accessKey, uriStr)
+	if body == nil && accessKey != ""{
+		return ValidateToken(db, accessKey, body)
+	}else if body != nil && accessKey != ""{
+		return ValidateToken(db, accessKey, body)
 	}else{
-		return "", false
+		return AuthModel{}, false
 	}
 }
