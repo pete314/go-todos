@@ -8,9 +8,8 @@ import (
 	//valid "github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
-	"../common"
 	"net/http"
-	//"gopkg.in/mgo.v2/bson"
+	"../common"
 	"../user"
 )
 

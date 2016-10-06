@@ -27,6 +27,12 @@ type User struct {
 	Updated   time.Time     `json:"updated" bson:"updated"`
 }
 
+type UserLoginModel struct{
+	UserID   bson.ObjectId  `json:"userId" bson:"_id"`
+	UserUrl	 string		`json:"userUrl" bson:"userUrl"`
+	AccessToken string 	`json:"accessToken" bson:"accessToken"`
+	Expires	 int 		`json:"expires" bson:"expires"`
+}
 
 //Get the user
 //returns the response body and true on success
@@ -96,9 +102,12 @@ func ValidateUser(db *mgo.Database, res *common.Resource, u *User) (interface{},
 		if invalidHash := bcrypt.CompareHashAndPassword([]byte(foundUser.Password),
 				[]byte(u.Password)); invalidHash == nil {
 			//create token entry in db
+			if token := common.CreateUserToken(db, foundUser); len(token) > 0 {
 
-			return &common.SuccessBody{Success: true, Result: "v0.1/user/get/" + foundUser.ID.Hex()},
-				true
+				return &common.SuccessBody{Success: true, Result: &UserLoginModel{UserID:foundUser.ID.Hex(),
+					UserUrl:"v0.1/user/get/" + u.ID.Hex(), Expires:3600, AccessToken:token}},
+					true
+			}
 		}
 	}
 
