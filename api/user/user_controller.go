@@ -141,9 +141,8 @@ func handleUserPut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
+	//Password field is removed as it is pushed to the patch
 	if p.Action == "update" && p.ID != "" &&
-		u.Password != "" && len(u.Password) > 5 &&
 		u.Dob != "" &&
 		u.Email != "" && valid.IsEmail(u.Email) &&
 		u.Firstname != "" &&
