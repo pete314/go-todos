@@ -10,7 +10,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
-	"fmt"
+	"log"
 )
 
 const (
@@ -148,7 +148,7 @@ func UpdateUser(db *mgo.Database, u *User)(interface{}, bool){
 			true
 
 	}else{
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	return &common.ErrorBody{Src: "API.USER.REQUEST.VALIDATE", Code: 404,
