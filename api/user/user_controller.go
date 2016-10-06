@@ -11,6 +11,7 @@ import (
 	"../common"
 	"net/http"
 	"gopkg.in/mgo.v2/bson"
+	"golang.org/x/crypto/bcrypt"
 )
 
 //Module controller constants
@@ -193,7 +194,8 @@ func checkFiledValue(u *User, f string) (string, string, bool){
 	switch f{
 	case "password":
 		if u.Password != "" && len(u.Password) > 5{
-			return "password", u.Password, true
+			pBytes , _ := bcrypt.GenerateFromPassword([]byte(u.Password), 10)
+			return "password", string(pBytes[:]), true
 		}
 	case "email":
 		if valid.IsEmail(u.Email){
