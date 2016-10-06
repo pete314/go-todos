@@ -35,7 +35,7 @@
       				<label id="signupInputLabel" class="control-label">Email:</label>
       				</div>
           			<div class="col-md-10">
-           			<input type="text" placeholder="Email goes here" data-ng-model="profileEmail" class="form-control">
+           			<input type="text" placeholder="Email goes here" data-ng-model="email" class="form-control">
           			</div>
       			</div>
       			<div class="form-group">
@@ -43,7 +43,7 @@
       				<label id="signupInputLabel" class="control-label">First Name:</label>
       				</div>
           			<div class="col-md-10">
-           			<input type="text" placeholder="First Name goes here" data-ng-model="profileFNAme" class="form-control">
+           			<input type="text" placeholder="First Name goes here" data-ng-model="firstname" class="form-control">
           			</div>
       			</div>
       			<div class="form-group">
@@ -51,15 +51,7 @@
       				<label id="signupInputLabel" class="control-label">Last Name:</label>
       				</div>
           			<div class="col-md-10">
-           			<input type="text" placeholder="Last Name goes here" data-ng-model="profileLNAme" class="form-control">
-          			</div>
-      			</div>
-      			<div class="form-group">
-      				<div class="col-md-2">
-      				<label id="signupInputLabel" class="control-label">Password:</label>
-      				</div>
-          			<div class="col-md-10">
-           			<input type="password" placeholder="Password goes here" data-ng-model="profilePassword" class="form-control">
+           			<input type="text" placeholder="Last Name goes here" data-ng-model="surname" class="form-control">
           			</div>
       			</div>
       			<div class="form-group">
@@ -70,19 +62,29 @@
            			<input id="datepicker" type="text" placeholder="yyyy/mm/dd" data-ng-model="dob" class="form-control">
           			</div>
       			</div>
-      			<div class="form-group">
-      				<div class="col-md-2">
-      				<label id="signupInputLabel" class="control-label">Notifications:</label>
-      				</div>
-          			<div class="col-md-1">
-           			<input type="checkbox" data-ng-model="notificationsAllowed" class="form-control">
-          			</div>
-      			</div>
+      			<div class="col-md-3">
+      			<input style="background-color: #327BF0; margin-left:-14px; margin-bottom:60px; color:white;" type="button" value="Update Profile" class="form-control" data-ng-click="updateProfile()">
+      	  		</div>
       	  </div>
 		</form>
+		<form class="form-horizontal">
+			<div class="container-fluid">
+			<div class="form-group">
+      				<div class="col-md-2">
+      				<label id="signupInputLabel" class="control-label">Password:</label>
+      				</div>
+          			<div class="col-md-10">
+           			<input type="password" placeholder="Insert New Password Here" data-ng-model="password" class="form-control">
+          			</div>
+      			</div>
+      			<div class="col-md-3">
+      			<input style="background-color: #327BF0; margin-bottom:30px; margin-left:-14px; color:white;" type="button" value="Update Password" class="form-control" data-ng-click="updatePassword()">
+				</div>
+			</div>
+		</form>	
         </div>
       <div class="col-md-3" style="padding-top: 430px;">
-         <center><input style="background-color: #327BF0; margin-bottom:30px; color:white;" type="button" value="Update" class="form-control" data-ng-click="updateProfile()"></center>
+         <!-- Empty second column just to help with alignment of the elements -->
       </div>
      </div>
 </div>
