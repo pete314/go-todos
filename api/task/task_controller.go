@@ -10,7 +10,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"net/http"
 	"../common"
-	"../user"
+	"log"
 )
 
 //Module controller constants
@@ -72,7 +72,7 @@ func taskController(w http.ResponseWriter, r *http.Request) {
 func handleTaskGet(w http.ResponseWriter, r *http.Request) {
 	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))
-	u := common.GetVar(r, "user").(*user.User)
+	u := common.GetVar(r, "user").(*common.AuthModel)
 
 	if p.Action != "get" {
 		common.RespondHTTPErr(w, r, http.StatusBadRequest,
@@ -81,7 +81,7 @@ func handleTaskGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if result, isSuccess := GetTask(db, p, u); isSuccess{
+	if result, isSuccess := GetTask(db, p, u.UserID); isSuccess{
 		common.Respond(w, r, http.StatusOK, &result)
 	}else{
 		common.RespondHTTPErr(w, r, http.StatusNotFound, &result)
@@ -90,7 +90,35 @@ func handleTaskGet(w http.ResponseWriter, r *http.Request) {
 
 //Handles create task
 func handleTaskPost(w http.ResponseWriter, r *http.Request) {
+	db := common.GetVar(r, "db").(*mgo.Database)
+	p := common.ParseRequestUri(mux.Vars(r))
+	user := common.GetVar(r, "user").(*common.AuthModel)
+	var httpStatus int
+	var responseBody interface{}
+	isSuccess := false
+	var taskBody *TaskModel
 
+	if err := common.DecodeBody(r, &taskBody); err != nil {
+		log.Println(err)
+		common.RespondHTTPErr(w, r, http.StatusBadRequest,
+			&common.ErrorBody{Src: "API.USER.REQUEST.PARSE", Code: 400, Desc: "Failed to parse request body"})
+	}
+
+	//Handle create account
+	if p.Action == "new" {
+		taskBody.OwnerID = user.UserID;
+		httpStatus, responseBody, isSuccess = CreateTask(db, taskBody)
+	} else{
+		httpStatus = http.StatusBadRequest
+		responseBody = &common.ErrorBody{Src:"API.TASK.REQUEST.VALIDATE", Code: 400, Desc:"Invalid request body for creating task"}
+	}
+
+	if !isSuccess {
+		common.RespondHTTPErr(w, r,httpStatus, responseBody)
+		return
+	}
+
+	common.Respond(w, r, httpStatus, responseBody)
 }
 
 //Update all task fields

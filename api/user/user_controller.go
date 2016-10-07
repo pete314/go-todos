@@ -114,6 +114,7 @@ func handleUserPost(w http.ResponseWriter, r *http.Request) {
 	common.Respond(w, r, httpStatus, responseBody)
 }
 
+//Handle user registration
 func handleUserReg(r *http.Request) (int, interface{}, bool){
 	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))
@@ -141,6 +142,7 @@ func handleUserReg(r *http.Request) (int, interface{}, bool){
 	}
 }
 
+//Handle user login
 func handleUserLogin(r *http.Request) (int, interface{}, bool){
 	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))

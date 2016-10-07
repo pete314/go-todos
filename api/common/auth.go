@@ -26,7 +26,7 @@ const (
 
 type AuthModel struct{
 	TokenID	   string	 `json:"tokenId" bson:"_tokenId"`
-	UserID 	   string 	 `json:"userId" bson:"_userId"`
+	UserID 	   bson.ObjectId `json:"userId" bson:"_userId"`
 	Scope 	   int		 `json:"scope" bson:"scope"`
 	TTL 	   time.Time	 `json:"ttl" bson:"ttl"`
 	Created    time.Time	 `json:"create" bson:"created"`
@@ -119,7 +119,7 @@ func CreateUserToken(db *mgo.Database, userId bson.ObjectId, co *OauthModel) str
 	}
 
 	entry := &AuthModel{
-		UserID: userId.Hex(),
+		UserID: userId,
 		TokenID: hex.EncodeToString(hash.Sum(nil)),
 		Scope: 0,//only supported
 		TTL: time.Now().Add(3600*time.Second),

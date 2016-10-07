@@ -57,7 +57,7 @@ func AddAuthentication(db *mgo.Session, fn http.HandlerFunc) http.HandlerFunc {
 					ErrorBody{Src:"API.AUTHENTICATION", Code: 401, Desc: "Invalid authentication"})
 				return
 			} else {
-				SetVar(r, "userid", userId)
+				SetVar(r, "user", userId)
 			}
 
 		}
