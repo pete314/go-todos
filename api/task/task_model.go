@@ -89,6 +89,24 @@ func CreateTask(db *mgo.Database, tm *TaskModel) (int, interface{}, bool) {
 	}
 }
 
+//Update task
+func UpdateTask(db *mgo.Database, tm *TaskModel) (int, interface{}, bool) {
+	c := db.C(dbCollection)
+	tm.Updated = time.Now()
+
+	if err := c.Update(bson.M{"_id": tm.ID}, bson.M{"$set": &tm}); err == nil {
+		return http.StatusAccepted,
+			&common.SuccessBody{Success: true, Result: "v0.1/task/get/" + tm.ID.Hex()},
+			true
+	} else {
+		log.Println(err)
+		return http.StatusInternalServerError,
+			&common.ErrorBody{Src: "API.TASK.UPDATE.DB", Code: 500, Desc: "Error while storing task"},
+			false
+	}
+}
+
+
 //Delete task
 func DeleteTask(db *mgo.Database, taskId string, ownerId bson.ObjectId) (interface{}, bool){
 	c := db.C(dbCollection)

@@ -5,12 +5,12 @@
 package task
 
 import (
-	//valid "github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 	"net/http"
 	"../common"
 	"log"
+	"strings"
 )
 
 //Module controller constants
@@ -49,9 +49,6 @@ func taskController(w http.ResponseWriter, r *http.Request) {
 		return
 	case "PUT":
 		handleTaskPut(w, r)
-		return
-	case "PATCH":
-		handleTaskPatch(w, r)
 		return
 	case "DELETE":
 		handleTaskDelete(w, r)
@@ -101,7 +98,7 @@ func handleTaskPost(w http.ResponseWriter, r *http.Request) {
 	if err := common.DecodeBody(r, &taskBody); err != nil {
 		log.Println(err)
 		common.RespondHTTPErr(w, r, http.StatusBadRequest,
-			&common.ErrorBody{Src: "API.USER.REQUEST.PARSE", Code: 400, Desc: "Failed to parse request body"})
+			&common.ErrorBody{Src: "API.TASK.REQUEST.PARSE", Code: 400, Desc: "Failed to parse request body"})
 	}
 
 	//Handle create account
@@ -123,12 +120,35 @@ func handleTaskPost(w http.ResponseWriter, r *http.Request) {
 
 //Update all task fields
 func handleTaskPut(w http.ResponseWriter, r *http.Request) {
+	db := common.GetVar(r, "db").(*mgo.Database)
+	p := common.ParseRequestUri(mux.Vars(r))
+	user := common.GetVar(r, "user").(*common.AuthModel)
+	var httpStatus int
+	var responseBody interface{}
+	isSuccess := false
+	var taskBody *TaskModel
 
-}
+	if err := common.DecodeBody(r, &taskBody); err != nil {
+		log.Println(err)
+		common.RespondHTTPErr(w, r, http.StatusBadRequest,
+			&common.ErrorBody{Src: "API.TASK.REQUEST.PARSE", Code: 400, Desc: "Failed to parse request body"})
+	}
 
-//Edit single task field
-func handleTaskPatch(w http.ResponseWriter, r *http.Request) {
+	//Handle create account
+	if p.Action == "update" && strings.Compare(p.ID, taskBody.ID.Hex()) == 0{
+		taskBody.OwnerID = user.UserID;
+		httpStatus, responseBody, isSuccess = CreateTask(db, taskBody)
+	} else{
+		httpStatus = http.StatusBadRequest
+		responseBody = &common.ErrorBody{Src:"API.TASK.REQUEST.VALIDATE", Code: 400, Desc:"Invalid request body for update task"}
+	}
 
+	if !isSuccess {
+		common.RespondHTTPErr(w, r,httpStatus, responseBody)
+		return
+	}
+
+	common.Respond(w, r, httpStatus, responseBody)
 }
 
 //Delete a user task
