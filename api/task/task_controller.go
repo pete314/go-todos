@@ -57,13 +57,13 @@ func taskController(w http.ResponseWriter, r *http.Request) {
 		handleTaskDelete(w, r)
 		return
 	case "OPTIONS":
-		w.Header().Add("Access-Control-Allow-Methods", "GET,PUT,PATCH,DELETE,OPTIONS")
+		w.Header().Add("Access-Control-Allow-Methods", "GET,PUT,DELETE,OPTIONS")
 		common.Respond(w, r, http.StatusOK, nil)
 		return
 	}
 	// not found
 	common.RespondHTTPErr(w, r, http.StatusNotFound,
-		&common.ErrorBody{Src: "API.USER.ROUTER", Code:404, Desc:"Invalid http request on resource"})
+		&common.ErrorBody{Src: "API.TASK.ROUTER", Code:404, Desc:"Invalid http request on resource"})
 }
 
 //Get task detail
@@ -133,5 +133,16 @@ func handleTaskPatch(w http.ResponseWriter, r *http.Request) {
 
 //Delete a user task
 func handleTaskDelete(w http.ResponseWriter, r *http.Request) {
+	db := common.GetVar(r, "db").(*mgo.Database)
+	p := common.ParseRequestUri(mux.Vars(r))
+	var result interface{}
+	isSuccess := false
+	user := common.GetVar(r, "user").(*common.AuthModel)
 
+	if result, isSuccess = DeleteTask(db, p.ID, user.UserID); !isSuccess{
+		common.RespondHTTPErr(w, r, http.StatusBadRequest,
+			result)
+	}else{
+		common.Respond(w, r, http.StatusCreated, result)
+	}
 }

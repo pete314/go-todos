@@ -37,7 +37,7 @@ func GetTask(db *mgo.Database, res *common.Resource, userId bson.ObjectId) (inte
 	var result []*TaskModel
 
 	if res.ID != "" {
-		q = c.FindId(bson.ObjectIdHex(res.ID))
+		q = c.Find(bson.M{"_id": bson.ObjectIdHex(res.ID), "_ownerId": userId})
 	}else{
 		q = c.Find(bson.M{"_ownerId": userId})
 	}
@@ -59,14 +59,15 @@ func CreateTask(db *mgo.Database, tm *TaskModel) (int, interface{}, bool) {
 
 	//@todo: push to db init script
 	index := mgo.Index{
-		Key:        []string{"_ownerId","_id"},
-		Unique:     true,
+		Key:        []string{"_ownerId"},
+		Unique:     false,
 		DropDups:   true,
 		Background: true,
 		Sparse:     true,
 	}
 	err := c.EnsureIndex(index)
 	if err != nil {
+		log.Println(err)
 		return http.StatusBadRequest,
 			&common.ErrorBody{Src: "API.Task.CREATE.DB", Code: 500, Desc: "Error while storing task, index"},
 			false
@@ -86,4 +87,22 @@ func CreateTask(db *mgo.Database, tm *TaskModel) (int, interface{}, bool) {
 			&common.ErrorBody{Src: "API.TASK.CREATE.DB", Code: 500, Desc: "Error while storing task"},
 			false
 	}
+}
+
+//Delete task
+func DeleteTask(db *mgo.Database, taskId string, ownerId bson.ObjectId) (interface{}, bool){
+	c := db.C(dbCollection)
+
+	if err := c.Remove(bson.M{"_id": bson.ObjectIdHex(taskId), "_ownerId": ownerId}); err == nil {
+		return &common.SuccessBody{Success: true, Result: true},
+			true
+	}else{
+		log.Println(err)
+	}
+
+	return &common.ErrorBody{Src: "API.TASK.REQUEST.VALIDATE", Code: 404,
+		Desc: "Tasl not found or not enough permission, did not delete task"},
+		false
+
+	return nil, false
 }
