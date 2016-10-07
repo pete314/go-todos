@@ -8,10 +8,11 @@ import (
 	"flag"
 	"log"
 	"time"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/graceful"
 	"gopkg.in/mgo.v2"
 	"./user"
-	"github.com/gorilla/mux"
+	"./task"
 )
 
 func main(){
@@ -29,7 +30,10 @@ func main(){
 	db.DB(*dbname)
 
 	rtr := mux.NewRouter()
+	//Load user module
 	user.AddModuleRouter(rtr, db)
+	//Load task module
+	task.AddModuleRouter(rtr, db)
 
 	log.Println("Starting web server on", *addr)
 	graceful.Run(*addr, 1*time.Second, rtr)

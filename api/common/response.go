@@ -30,6 +30,7 @@ func SerializeJson(b interface{}) []byte{
 
 //Encode data into JSON
 func EncodeBody(w http.ResponseWriter, r *http.Request, v interface{}) error {
+	CloseVars(r)
 	return json.NewEncoder(w).Encode(v)
 }
 

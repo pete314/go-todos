@@ -7,6 +7,7 @@ package common
 import (
 	"net/http"
 	"gopkg.in/mgo.v2"
+	"strings"
 )
 //Resource map for current request
 type Resource struct {
@@ -16,6 +17,7 @@ type Resource struct {
 }
 
 //Add default headers to response
+// net/http
 func AddDeafultHeaders(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Server", "go-todo-api/v0.1")
@@ -43,11 +45,21 @@ func AddVars(fn http.HandlerFunc) http.HandlerFunc {
 }
 
 //Add request authentication support
-func AddAuthentication(fn http.HandlerFunc) http.HandlerFunc {
+func AddAuthentication(db *mgo.Session, fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if !isValidRequest(r.Header.Get("Authorization")) {
-			//respondErr(w, r, http.StatusUnauthorized, "invalid API key")
-			return
+		db := GetVar(r, "db").(*mgo.Database)
+
+		//Do not validate login or register request
+		if !strings.Contains(r.RequestURI, string("user/login")) && !strings.Contains(r.RequestURI, string("user/new")) {
+
+			if userId, isValid := isValidRequest(db, r.Header.Get("Authorization")); !isValid {
+				RespondHTTPErr(w, r, http.StatusUnauthorized,
+					ErrorBody{Src:"API.AUTHENTICATION", Code: 401, Desc: "Invalid authentication"})
+				return
+			} else {
+				SetVar(r, "user", userId)
+			}
+
 		}
 		fn(w, r)
 	}
@@ -64,7 +76,11 @@ func WithDataAccess(db *mgo.Session, fn http.HandlerFunc) http.HandlerFunc {
 }
 
 //Validate request based on Authorization token
-//@todo: implement JWT - use
-func isValidRequest(accessKey string) bool {
-	return true;
+//@todo: should user hmac as well
+func isValidRequest(db *mgo.Database, accessKey string) (interface{}, bool) {
+	if accessKey != ""{
+		return ValidateToken(db, accessKey)
+	}else{
+		return AuthModel{}, false
+	}
 }
