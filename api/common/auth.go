@@ -14,8 +14,10 @@ import (
 	"encoding/hex"
 	"encoding/base64"
 	"strings"
+	"log"
 )
 
+//@todo: should validate the client id as well
 const (
 	dbCollection = "api_auth"
 	clientSecret = "9190f10a35c99be0fc6522b7eaa14edbdf7e40e347057f00909bd20a98a82b44"
@@ -24,7 +26,7 @@ const (
 
 type AuthModel struct{
 	TokenID	   string	 `json:"tokenId" bson:"_tokenId"`
-	UserID 	   bson.ObjectId `json:"userId" bson:"_userId"`
+	UserID 	   string 	 `json:"userId" bson:"_userId"`
 	Scope 	   int		 `json:"scope" bson:"scope"`
 	TTL 	   time.Time	 `json:"ttl" bson:"ttl"`
 	Created    time.Time	 `json:"create" bson:"created"`
@@ -32,16 +34,20 @@ type AuthModel struct{
 
 type OauthModel struct{
 	ID 		bson.ObjectId `json:"id,omitempty" bson:"_id,omitempty"`
-	UserID 		bson.ObjectId `json:"ttl" bson:"ttl"`
-	UserPassword	string `json:"userPassword" bson:"userPassword,omitempty"`
-	ClientId 	string `json:"clientId" bson:"clientId"`
-	ClientSecret 	string `json:"clientSecret" bson:"clientSecret"`
-	DevUserId  	string `json:"devUserId" bson:"devUserId"`
-	Scope 		int `json:"scope" bson:"scope"`
-	Created  time.Time `json:"created" bson:"created"`
+	Email 		string `json:"email" bson:"email"`
+	Password	string `json:"password" bson:"password,omitempty"`
+	ClientId 	string `json:"client_id" bson:"client_id"`
+	ClientSecret 	string `json:"client_secret" bson:"client_secret"`
+	GrantType	string `json:"grant_type" bson:"grant_type"`
+	DevUserId  	string `json:"devUserId,omitempty" bson:"devUserId,omitempty"`
+	Scope 		int `json:"scope,omitempty" bson:"scope,omitempty"`
+	Created  time.Time `json:"created,omitempty" bson:"created"`
 }
 
-func ValidateToken(db *mgo.Database, token string, oauthmodel *OauthModel) (interface{}, bool){
+//Validate bearer
+//@todo: should check for expires after ui is ready
+//@todo: should auto clean mongodb with expires
+func ValidateToken(db *mgo.Database, token string) (interface{}, bool){
 	tokenBits := strings.Split(strings.TrimSpace(token), " ")
 	if len(tokenBits) == 2 && strings.Compare(tokenBits[0], string("Bearer")) == 0{
 		if entry, isAvailable := getToken(db, tokenBits[1]); isAvailable {
@@ -74,13 +80,20 @@ func computeHmac256(payload string, secret []byte) string {
 	return string(base64.StdEncoding.EncodeToString(h.Sum(nil))[:])
 }
 
-func CreateUserToken(db *mgo.Database, userId bson.ObjectId) string{
+func CreateUserToken(db *mgo.Database, userId bson.ObjectId, co *OauthModel) string{
+	if strings.Compare(co.ClientId, clientId) != 0 || strings.Compare(co.ClientSecret, clientSecret) != 0||
+		strings.Compare(co.GrantType, string("client_credentials")) != 0{
+		log.Println(co)
+		return ""
+	}
+
 	c := db.C(dbCollection)
 	rndb := make([]byte, 32)
 	rand.Read(rndb)
 	hash := sha256.New()
 	hash.Write(rndb)
 
+	//@todo: push this into db initlization script
 	index := mgo.Index{
 		Key:        []string{"_tokenId", "_userId"},
 		Unique:     true,
@@ -88,14 +101,25 @@ func CreateUserToken(db *mgo.Database, userId bson.ObjectId) string{
 		Background: true,
 		Sparse:     true,
 	}
-	err := c.EnsureIndex(index)
-	if err != nil {
-		//@todo: introduce logging
+	tokenTTL := mgo.Index{
+		Key:         []string{"created"},
+		Unique:      false,
+		DropDups:    false,
+		Background:  true,
+		ExpireAfter: 1 * 60} //3600 sec
+
+	if err := c.EnsureIndex(tokenTTL); err != nil {
+		log.Println(err)
+		return ""
+	}
+
+	if err := c.EnsureIndex(index); err != nil {
+		log.Println(err)
 		return ""
 	}
 
 	entry := &AuthModel{
-		UserID: userId,
+		UserID: userId.Hex(),
 		TokenID: hex.EncodeToString(hash.Sum(nil)),
 		Scope: 0,//only supported
 		TTL: time.Now().Add(3600*time.Second),
@@ -103,6 +127,8 @@ func CreateUserToken(db *mgo.Database, userId bson.ObjectId) string{
 
 	if err := c.Insert(entry); err == nil{
 		return entry.TokenID
+	}else{
+		log.Println("Token insertion error:", err)
 	}
 	return ""
 }
@@ -112,7 +138,7 @@ func getToken(db *mgo.Database, tokenId string) (*AuthModel, bool){
 	c := db.C(dbCollection)
 	var entry *AuthModel
 
-	if err := c.FindId(bson.ObjectIdHex(tokenId)).One(entry); err == nil{
+	if err := c.Find(bson.M{"_tokenId": tokenId}).One(&entry); err == nil{
 		return entry, true
 	}
 

@@ -10,6 +10,8 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
+	"net/http"
+	"log"
 )
 
 const (
@@ -58,7 +60,7 @@ func GetUser(db *mgo.Database, res *common.Resource) (interface{}, bool) {
 }
 
 //Create new user account
-func CreateUser(db *mgo.Database, res *common.Resource, u *User) (interface{}, bool) {
+func CreateUser(db *mgo.Database, res *common.Resource, u *User) (int, interface{}, bool) {
 	c := db.C(dbCollection)
 	pBytes, _ := bcrypt.GenerateFromPassword([]byte(u.Password), 10)
 
@@ -71,7 +73,8 @@ func CreateUser(db *mgo.Database, res *common.Resource, u *User) (interface{}, b
 	}
 	err := c.EnsureIndex(index)
 	if err != nil {
-		return &common.ErrorBody{Src: "API.USER.CREATE.DB", Code: 500, Desc: "Error while storing user, index"},
+		return http.StatusBadRequest,
+			&common.ErrorBody{Src: "API.USER.CREATE.DB", Code: 500, Desc: "Error while storing user, index"},
 			false
 	}
 
@@ -81,16 +84,18 @@ func CreateUser(db *mgo.Database, res *common.Resource, u *User) (interface{}, b
 	u.Updated = time.Now()
 
 	if err := c.Insert(u); err == nil {
-		return &common.SuccessBody{Success: true, Result: "v0.1/user/get/" + u.ID.Hex()},
+		return http.StatusAccepted,
+			&common.SuccessBody{Success: true, Result: "v0.1/user/get/" + u.ID.Hex()},
 			true
 	} else {
-		return &common.ErrorBody{Src: "API.USER.CREATE.DB", Code: 500, Desc: "Error while storing user"},
+		return http.StatusInternalServerError,
+			&common.ErrorBody{Src: "API.USER.CREATE.DB", Code: 500, Desc: "Error while storing user"},
 			false
 	}
 }
 
 //Validate user login attempt
-func ValidateUser(db *mgo.Database, res *common.Resource, u *User) (interface{}, bool) {
+func ValidateUser(db *mgo.Database, res *common.Resource, u *common.OauthModel) (int, interface{}, bool) {
 	c := db.C(dbCollection)
 	var q *mgo.Query
 	var foundUser *User
@@ -102,16 +107,21 @@ func ValidateUser(db *mgo.Database, res *common.Resource, u *User) (interface{},
 		if invalidHash := bcrypt.CompareHashAndPassword([]byte(foundUser.Password),
 				[]byte(u.Password)); invalidHash == nil {
 			//create token entry in db
-			if token := common.CreateUserToken(db, foundUser.ID); len(token) > 0 {
-
-				return &common.SuccessBody{Success: true, Result: &UserLoginModel{UserID:foundUser.ID,
-					UserUrl:"v0.1/user/get/" + u.ID.Hex(), Expires:3600, AccessToken:token}},
+			if token := common.CreateUserToken(db, foundUser.ID, u); len(token) > 0 {
+				return  http.StatusOK,
+					&common.SuccessBody{Success: true, Result: &UserLoginModel{UserID:foundUser.ID,
+					UserUrl:"v0.1/user/get/" + foundUser.ID.Hex(), Expires:3600, AccessToken:token}},
 					true
+			}else{
+				log.Println("Invalid token request: ", u)
 			}
+		}else{
+			log.Println("invalid password attempt")
 		}
 	}
 
-	return &common.ErrorBody{Src: "API.USER.REQUEST.VALIDATE", Code: 404,
+	return http.StatusNotFound,
+		&common.ErrorBody{Src: "API.USER.REQUEST.VALIDATE", Code: 404,
 					Desc: "User not found, or invalid password"},
 		false
 }

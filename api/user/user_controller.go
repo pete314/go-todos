@@ -11,6 +11,8 @@ import (
 	"../common"
 	"net/http"
 	"gopkg.in/mgo.v2/bson"
+	"log"
+	"golang.org/x/crypto/bcrypt"
 )
 
 //Module controller constants
@@ -88,46 +90,84 @@ func handleUserGet(w http.ResponseWriter, r *http.Request) {
 
 //Handles create account and login
 func handleUserPost(w http.ResponseWriter, r *http.Request) {
-	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))
-	var u *User
-	var result interface{}
+	var httpStatus int
+	var responseBody interface{}
 	isSuccess := false
-
-	if err := common.DecodeBody(r, &u); err != nil {
-		common.RespondHTTPErr(w, r, http.StatusBadRequest,
-			&common.ErrorBody{Src: "API.USER.REQUEST.PARSE", Code: 400, Desc: "Failed to parse request body"})
-		return
-	}
 
 	//Handle create account
 	//@todo: try generalize field validation
-	if p.Action == "new" &&
-		u.Password != "" && len(u.Password) > 5 &&
+	if p.Action == "new" {
+		httpStatus, responseBody, isSuccess = handleUserReg(r)
+	} else if p.Action == "login"{
+		httpStatus, responseBody, isSuccess = handleUserLogin(r)
+	}else{
+		httpStatus = http.StatusBadRequest
+		responseBody = &common.ErrorBody{Src:"API.USER.REQUEST.VALIDATE", Code: 400, Desc:"Invalid request body"}
+	}
+
+	if !isSuccess {
+		common.RespondHTTPErr(w, r,httpStatus, responseBody)
+		return
+	}
+
+	common.Respond(w, r, httpStatus, responseBody)
+}
+
+func handleUserReg(r *http.Request) (int, interface{}, bool){
+	db := common.GetVar(r, "db").(*mgo.Database)
+	p := common.ParseRequestUri(mux.Vars(r))
+	var u *User
+
+	if err := common.DecodeBody(r, &u); err != nil {
+		log.Println(err)
+		return http.StatusBadRequest,
+			&common.ErrorBody{Src: "API.USER.REQUEST.PARSE", Code: 400, Desc: "Failed to parse request body"},
+			false
+	}
+
+	//@todo: refactor
+	if u.Password != "" && len(u.Password) > 5 &&
 		u.Dob != "" &&
 		u.Email != "" && valid.IsEmail(u.Email) &&
 		u.Firstname != "" &&
 		u.Surname != "" {
-		result, isSuccess = CreateUser(db, p, u)
-	} else if p.Action == "login" &&
-		u.Password != "" &&
-		u.Email != "" && valid.IsEmail(u.Email) &&
-		u.Firstname == "" &&
-		u.Surname == "" &&
-		u.Dob == ""{
-		result, isSuccess = ValidateUser(db, p, u)
+
+		return CreateUser(db, p, u)
 	}else{
-		result = &common.ErrorBody{Src:"API.USER.REQUEST.VALIDATE", Code: 400, Desc:"Invalid request body"}
+		return http.StatusBadRequest,
+			&common.ErrorBody{Src:"API.USER.REQUEST.VALIDATE", Code: 400, Desc:"Invalid request body"},
+			false
 	}
-
-	if !isSuccess {
-		common.RespondHTTPErr(w, r, http.StatusBadRequest,
-			result)
-		return
-	}
-
-	common.Respond(w, r, http.StatusCreated, result)
 }
+
+func handleUserLogin(r *http.Request) (int, interface{}, bool){
+	db := common.GetVar(r, "db").(*mgo.Database)
+	p := common.ParseRequestUri(mux.Vars(r))
+	var o *common.OauthModel
+
+	if err := common.DecodeBody(r, &o); err != nil {
+		log.Println(err)
+		return http.StatusBadRequest,
+			&common.ErrorBody{Src: "API.USER.REQUEST.PARSE", Code: 400, Desc: "Failed to parse request body"},
+			false
+	}
+
+	//@todo: refactor
+	if o.Password != "" &&
+		o.Email != "" && valid.IsEmail(o.Email) &&
+		o.Password != "" &&
+		o.ClientId != "" &&
+		o.ClientSecret != "" &&
+		o.GrantType != ""{
+		return ValidateUser(db, p, o)
+	}else{
+		return http.StatusBadRequest,
+			&common.ErrorBody{Src:"API.USER.REQUEST.VALIDATE", Code: 400, Desc:"Invalid request body"},
+			false
+	}
+}
+
 
 //Update all user fields
 func handleUserPut(w http.ResponseWriter, r *http.Request) {
@@ -141,9 +181,8 @@ func handleUserPut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
+	//Password field is removed as it is pushed to the patch
 	if p.Action == "update" && p.ID != "" &&
-		u.Password != "" && len(u.Password) > 5 &&
 		u.Dob != "" &&
 		u.Email != "" && valid.IsEmail(u.Email) &&
 		u.Firstname != "" &&
@@ -194,7 +233,8 @@ func checkFiledValue(u *User, f string) (string, string, bool){
 	switch f{
 	case "password":
 		if u.Password != "" && len(u.Password) > 5{
-			return "password", u.Password, true
+			pBytes , _ := bcrypt.GenerateFromPassword([]byte(u.Password), 10)
+			return "password", string(pBytes[:]), true
 		}
 	case "email":
 		if valid.IsEmail(u.Email){

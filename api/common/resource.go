@@ -47,24 +47,19 @@ func AddVars(fn http.HandlerFunc) http.HandlerFunc {
 //Add request authentication support
 func AddAuthentication(db *mgo.Session, fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var authM *OauthModel
+		db := GetVar(r, "db").(*mgo.Database)
 
-		//@todo: remove this duplicate
-		thisDb := db.Copy()
-		defer thisDb.Close()
-		d := thisDb.DB("todo-api")
-		if err := DecodeBody(r, &authM); err == nil {
-			if userId, isValid := isValidRequest(d, r.Header.Get("Authorization"), r.RequestURI, authM); !isValid {
+		//Do not validate login or register request
+		if !strings.Contains(r.RequestURI, string("user/login")) && !strings.Contains(r.RequestURI, string("user/new")) {
+
+			if userId, isValid := isValidRequest(db, r.Header.Get("Authorization")); !isValid {
 				RespondHTTPErr(w, r, http.StatusUnauthorized,
 					ErrorBody{Src:"API.AUTHENTICATION", Code: 401, Desc: "Invalid authentication"})
 				return
 			} else {
 				SetVar(r, "userid", userId)
 			}
-		}else{
-			RespondHTTPErr(w, r, http.StatusUnauthorized,
-				ErrorBody{Src:"API.AUTHENTICATION", Code: 401, Desc: "Invalid authentication"})
-			return
+
 		}
 		fn(w, r)
 	}
@@ -81,17 +76,10 @@ func WithDataAccess(db *mgo.Session, fn http.HandlerFunc) http.HandlerFunc {
 }
 
 //Validate request based on Authorization token
-//@todo: implement JWT - use
-func isValidRequest(db *mgo.Database, accessKey string, uriStr string, body *OauthModel) (interface{}, bool) {
-	//Do not validate login or register request
-	if strings.Contains(uriStr, "user/login") || strings.Contains(uriStr, "user/new"){
-		return AuthModel{}, true
-	}
-
-	if body == nil && accessKey != ""{
-		return ValidateToken(db, accessKey, body)
-	}else if body != nil && accessKey != ""{
-		return ValidateToken(db, accessKey, body)
+//@todo: should user hmac as well
+func isValidRequest(db *mgo.Database, accessKey string) (interface{}, bool) {
+	if accessKey != ""{
+		return ValidateToken(db, accessKey)
 	}else{
 		return AuthModel{}, false
 	}
