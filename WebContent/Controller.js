@@ -150,10 +150,11 @@ app.controller('loginController', function($scope, $http, $location, localStorag
 	
 	function logUserIn(response)
 	{
-		var responseResult = response.data.Result;		//Get result url from response key value 'Result'
-		var userId = responseResult.split('/')[3];		//Get the users id from it
-		localStorageService.set("userID", userId);		//Set localStorageService variables
-		localStorageService.set("loggedIn", true);
+		var userId = response.data.Result.userId;		//Get result url from response key value 'Result'
+		var accessToken = response.data.Result.accessToken;
+		localStorageService.set("userID", userId);				//Set localStorageService variables...userID
+		localStorageService.set("accessToken", accessToken);	//Returned access token
+		localStorageService.set("loggedIn", true);				//logged in boolean set to true.
 		$location.path('/dashboard');					//redirect to dashboard
 	}
 });
