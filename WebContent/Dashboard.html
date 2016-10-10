@@ -50,8 +50,14 @@
 		</form>
        </div>
        <div class="col-md-6">
-          <center><h2>Task List Area</h2></center>
-          <p>Generated on the fly, can use ng-repeat here</p>
+          <center><h2 style="color:blue;">Task List Area</h2></center>
+          <div style="height:400px; overflow-y:scroll;">
+          <ul class="list-group">
+          <li style="font-family:Tahoma;" class="list-group-item" data-ng-repeat="task in tasks">
+				{{ task.name }}
+		  </li>
+		  </ul>
+		  </div>
        </div>
      </div>
    </div>

@@ -19,7 +19,7 @@ app.service('appServices', function($location, localStorageService){
 });
 
 //Provides page routing for the application
-app.config(function($routeProvider, localStorageServiceProvider){
+app.config(function($routeProvider, localStorageServiceProvider, $httpProvider){
 	
 	//Config the localStorageServiceProvider to local storage
 	localStorageServiceProvider
@@ -122,20 +122,20 @@ app.controller('loginController', function($scope, $http, $location, localStorag
 		$http.post(rootURL + endpointNewUser, jsonNewUser, config)
 		.then(
 			function(response){//if success
-				logUserIn(response);		//log user in, defined at bottom of this controller
+				alert("User created successfully, please login with your creditials")
 			}, 
 			function(response){//if error
+				alert("Something wrong");
 				console.log(response);		//just log it for now	
 			}
 		);	
 	}//end signup event
 	
-	$scope.login = function()
-	{
+	$scope.login = function(){
 		var endpointLoginUser = 'user/login';
 		var userLogin = new UserLogin($scope.passwordLogin, $scope.emailLogin);
 		var jsonLoginUser = angular.toJson(userLogin);
-		
+	 
 		//Post the data to the url endpoint user/login and add header of Content-Type = application/json (in config)
 		$http.post(rootURL + endpointLoginUser, jsonLoginUser, config)
 		.then(
@@ -143,27 +143,65 @@ app.controller('loginController', function($scope, $http, $location, localStorag
 				logUserIn(response);			//log user in, defined at bottom of this controller
 			}, 
 			function(response){//if error
+				alert("Something wrong");
 				console.log(response);			//just log it for now		
 			}
 		);	
 	}//end login event
 	
-	function logUserIn(response)
-	{
-		var userId = response.data.Result.userId;		//Get result url from response key value 'Result'
-		var accessToken = response.data.Result.accessToken;
+	function logUserIn(response){
+		var userId = response.data.Result.userId;				//Get user id from response 
+		var accessToken = response.data.Result.accessToken;		//Get the access token from response
 		localStorageService.set("userID", userId);				//Set localStorageService variables...userID
 		localStorageService.set("accessToken", accessToken);	//Returned access token
 		localStorageService.set("loggedIn", true);				//logged in boolean set to true.
-		$location.path('/dashboard');					//redirect to dashboard
+		$location.path('/dashboard');							//redirect to dashboard
 	}
 });
 
 //Controller for dashboard page of the application, has scope for that entire page, passing in custom service as parameter
-app.controller('dashboardController', function($scope, appServices) {
+app.controller('dashboardController', function($scope, appServices, $http, localStorageService) {
 	
-	$scope.logout = function()
-	{
+	var newTaskUrl = "task/new";
+	var getTaskListUrl = "task/get";
+	
+	$scope.addNewTask = function(){
+		var newTask = new NewTask($scope.taskName, $scope.taskDescription);
+		var jsonNewTask = angular.toJson(newTask);
+		
+		$http.post(rootURL + newTaskUrl, jsonNewTask, {
+		    headers: {'Content-Type':'application/json',
+		    	'Authorization':'Bearer '+localStorageService.get("accessToken")}
+		})
+		.then(
+			function(response){//if success
+				getTasks();
+			}, 
+			function(response){//if error
+				alert("Something wrong");
+				console.log(response);			//just log it for now		
+			}
+		);	
+	}
+	
+	var getTasks = function(){
+		$http.get(rootURL + getTaskListUrl, {
+		    headers: {'Content-Type':'application/json',
+		    	'Authorization':'Bearer '+localStorageService.get("accessToken")}
+		})
+		.then(
+			function(response){//if success
+				$scope.tasks = response.data.Result;
+			}, 
+			function(response){//if error
+			   console.log(response);//just log error for now
+			}
+		);	
+	}
+	
+	getTasks(); //Fire as soon as user naviates to this page(controller)
+	
+	$scope.logout = function(){
 		appServices.logout();//call the custom app services logout function
 	}
 });
@@ -175,9 +213,13 @@ app.controller('profileController', function($scope, appServices, localStorageSe
 	var putUrl = "user/update/"+localStorageService.get("userID");//Creates the url for putting updated user data (PUT)
 	var patchUrl = "user/edit/"+localStorageService.get("userID")+"/password";//Creates the url for patching updated user password (PATCH)
 	
+	
 	//Get request for the user data
 	var getUserData =  function () {
-		$http.get(rootURL + getUrl)
+		$http.get(rootURL + getUrl, {
+		    headers: {'Content-Type':'application/json',
+		    	'Authorization':'Bearer '+localStorageService.get("accessToken")}
+		})
 		.then(
 			function(response){//if success
 				outputUserData(response);//call function to output the user data to the view (defined below)
@@ -222,16 +264,14 @@ app.controller('profileController', function($scope, appServices, localStorageSe
     }
     
     //Function to log out user, call function from apps services (defined after app.config at the top)
-	$scope.logout = function()
-	{
+	$scope.logout = function(){
 		appServices.logout();
 	}
 	
 	getUserData();//When this control is navigated to call function to GET user details and output to the view
 	
 	//Function that gets the response data and it so we can output the users details in the view.
-	function outputUserData(response)
-	{
+	function outputUserData(response){
 		var responseEmail = response.data.Result.email;
 		var responseFirstName = response.data.Result.firstname;
 		var responseSurname = response.data.Result.surname;
@@ -246,18 +286,53 @@ app.controller('profileController', function($scope, appServices, localStorageSe
 //Controller for fandq page of the application, has scope for that entire page, passing in custom service as parameter
 app.controller('FandQController', function($scope, appServices) {
 	
-	$scope.logout = function()
-	{
+	$scope.logout = function(){
 		appServices.logout();
 	}
 	
 });
 
 //Controller for manage tasks page of the application, has scope for that entire page, passing in custom service as parameter
-app.controller('manageTaskController', function($scope, appServices) {
+app.controller('manageTaskController', function($scope, appServices, $http, localStorageService) {
 	
-	$scope.logout = function()
-	{
+	var getTaskListUrl = "task/get";
+	
+	var getTasks = function(){
+		$http.get(rootURL + getTaskListUrl, {
+		    headers: {'Content-Type':'application/json',
+		    	'Authorization':'Bearer '+localStorageService.get("accessToken")}
+		})
+		.then(
+			function(response){//if success
+				$scope.tasks = response.data.Result;
+			}, 
+			function(response){//if error
+			   console.log(response);//just log error for now
+			}
+		);	
+	}
+	
+	$scope.statusChanged = function(index){
+
+		//$scope.tasks.push({'taskMessage':$scope.task, 'status':"false"});
+		//localStorage['taskList'] = JSON.stringify($scope.tasks); //add the array to the browser cache (in case of refresh)
+		
+		/*if($scope.tasks[x].status == "true")
+		{
+			$scope.tasks[x].status = "false";
+		}
+		else if($scope.tasks[x].status == "false")
+		{
+			$scope.tasks[x].status = "true";
+		}
+		
+		localStorage['taskList'] = JSON.stringify($scope.tasks);*/
+		
+	}
+	
+	getTasks();
+	
+	$scope.logout = function(){
 		appServices.logout();
 	}
 	
