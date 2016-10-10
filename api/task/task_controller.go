@@ -155,11 +155,26 @@ func handleTaskPut(w http.ResponseWriter, r *http.Request) {
 func handleTaskDelete(w http.ResponseWriter, r *http.Request) {
 	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))
+	var taskids *TaskIdList
 	var result interface{}
 	isSuccess := false
 	user := common.GetVar(r, "user").(*common.AuthModel)
 
-	if result, isSuccess = DeleteTask(db, p.ID, user.UserID); !isSuccess{
+	if p.ID == ""{
+		//Delete list by ids
+		if err := common.DecodeBody(r, &taskids); err != nil {
+			log.Println(err)
+			common.RespondHTTPErr(w, r, http.StatusBadRequest,
+				&common.ErrorBody{Src: "API.TASK.REQUEST.PARSE", Code: 400, Desc: "Failed to parse request body"})
+		}else{
+			if result, isSuccess = DeleteTasks(db, taskids, user.UserID); !isSuccess {
+				common.RespondHTTPErr(w, r, http.StatusBadRequest,
+					result)
+			}else{
+				common.Respond(w, r, http.StatusOK, result)
+			}
+		}
+	}else if result, isSuccess = DeleteTask(db, p.ID, user.UserID); !isSuccess{
 		common.RespondHTTPErr(w, r, http.StatusBadRequest,
 			result)
 	}else{

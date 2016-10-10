@@ -30,6 +30,10 @@ type TaskModel struct{
 	Updated   time.Time     `json:"updated" bson:"updated"`
 }
 
+type TaskIdList struct{
+	Ids 	[]bson.ObjectId `json:"delete_ids"`
+}
+
 //Get task(s)
 func GetTask(db *mgo.Database, res *common.Resource, userId bson.ObjectId) (interface{}, bool) {
 	c := db.C(dbCollection)
@@ -112,6 +116,24 @@ func DeleteTask(db *mgo.Database, taskId string, ownerId bson.ObjectId) (interfa
 	c := db.C(dbCollection)
 
 	if err := c.Remove(bson.M{"_id": bson.ObjectIdHex(taskId), "_ownerId": ownerId}); err == nil {
+		return &common.SuccessBody{Success: true, Result: true},
+			true
+	}else{
+		log.Println(err)
+	}
+
+	return &common.ErrorBody{Src: "API.TASK.REQUEST.VALIDATE", Code: 404,
+		Desc: "Tasl not found or not enough permission, did not delete task"},
+		false
+
+	return nil, false
+}
+
+//Delete multiple entries
+func DeleteTasks(db *mgo.Database, taskIds *TaskIdList, ownerId bson.ObjectId) (interface{}, bool){
+	c := db.C(dbCollection)
+
+	if err := c.Remove(bson.M{"_id": bson.M{"$in":taskIds.Ids}, "_ownerId": ownerId}); err == nil {
 		return &common.SuccessBody{Success: true, Result: true},
 			true
 	}else{
