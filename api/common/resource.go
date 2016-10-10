@@ -50,7 +50,9 @@ func AddAuthentication(db *mgo.Session, fn http.HandlerFunc) http.HandlerFunc {
 		db := GetVar(r, "db").(*mgo.Database)
 
 		//Do not validate login or register request
-		if !strings.Contains(r.RequestURI, string("user/login")) && !strings.Contains(r.RequestURI, string("user/new")) {
+		if !strings.Contains(r.RequestURI, string("user/login")) &&
+			!strings.Contains(r.RequestURI, string("user/new")) &&
+			strings.Compare(r.Method, "OPTIONS") != 0 {
 
 			if userId, isValid := isValidRequest(db, r.Header.Get("Authorization")); !isValid {
 				RespondHTTPErr(w, r, http.StatusUnauthorized,
