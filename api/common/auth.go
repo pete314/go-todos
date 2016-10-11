@@ -93,10 +93,10 @@ func CreateUserToken(db *mgo.Database, userId bson.ObjectId, co *OauthModel) str
 	hash := sha256.New()
 	hash.Write(rndb)
 
-	//@todo: push this into db initlization script
+	//@todo: push this into db initalization script
 	index := mgo.Index{
 		Key:        []string{"_tokenId", "_userId"},
-		Unique:     true,
+		Unique:     false,
 		DropDups:   true,
 		Background: true,
 		Sparse:     true,
