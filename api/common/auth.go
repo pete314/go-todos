@@ -140,6 +140,8 @@ func getToken(db *mgo.Database, tokenId string) (*AuthModel, bool){
 
 	if err := c.Find(bson.M{"_tokenId": tokenId}).One(&entry); err == nil{
 		return entry, true
+	}else{
+		log.Println(err)
 	}
 
 	return entry, false
