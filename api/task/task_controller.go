@@ -137,7 +137,7 @@ func handleTaskPut(w http.ResponseWriter, r *http.Request) {
 	//Handle create account
 	if p.Action == "update" && strings.Compare(p.ID, taskBody.ID.Hex()) == 0{
 		taskBody.OwnerID = user.UserID;
-		httpStatus, responseBody, isSuccess = CreateTask(db, taskBody)
+		httpStatus, responseBody, isSuccess = UpdateTask(db, taskBody)
 	} else{
 		httpStatus = http.StatusBadRequest
 		responseBody = &common.ErrorBody{Src:"API.TASK.REQUEST.VALIDATE", Code: 400, Desc:"Invalid request body for update task"}
