@@ -36,15 +36,14 @@
   		 <thead>
   		 <tbody data-ng-repeat="task in tasks track by $index"> 
   			<tr>
-    		 <td>{{task.name}}</td>
-    		 <td>{{task.content}}</td>
+    		 <td id="name" contenteditable="false" data-ng-keydown="editEnter($index)" data-ng-dblclick="contentEdit($index)">{{task.name}}</td>
+    		 <td id="content" contenteditable="false" data-ng-keydown="editEnter($index)" data-ng-dblclick="contentEdit($index)">{{task.content}}</td>
     		 <td><input type="checkbox" data-ng-change="statusChanged($index)" data-ng-model="task.id" name="selectedTask" value="selected"></td>
   			</tr>
   		 </tbody>
         </table> 
         </div>
-      <div class="col-md-2" style="padding-top:150px;">
-         <center><input style="background-color: #327BF0; margin-bottom:30px; color:white;" type="button" value="Done" class="form-control" data-ng-click="completeTask()"></center>
+      <div class="col-md-2" style="padding-top:130px;">
          <center><input style="background-color: #327BF0; margin-bottom:30px; color:white;" type="button" value="Edit" class="form-control" data-ng-click="editTask()"></center>
          <center><input style="background-color: #327BF0; color:white;" type="button" value="Delete" class="form-control" data-ng-click="deleteTask()"></center>
       </div>
