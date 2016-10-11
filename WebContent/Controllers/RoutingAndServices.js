@@ -117,4 +117,3 @@ app.config(function($routeProvider, localStorageServiceProvider, $httpProvider){
 		redirectTo: '/'
 	});
 });
-
