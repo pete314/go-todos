@@ -1,5 +1,6 @@
 <!--Manage Tasks Controller Area-->
 <div data-ng-controller="manageTaskController">
+<!-- Navbar Complete with icons for different user options -->
 <nav id="nav" class="navbar navbar-dark navbar-static-top">
 	<div class="container">
 		<div class="navbar-header">
@@ -23,9 +24,12 @@
 	</div>
 </nav>
 
+<!-- Container which has two columns -->
 <div class="container" style="margin-top:40px;">
   	  <div class="row">
+  	  <!-- First column taking 10 out of total 12 width -->
         <div class="col-md-10" style="height:400px; overflow-y:scroll;"> 
+        <!-- Table to show all user tasks -->
         <table class="table">
           <thead>
    			<tr>
@@ -34,6 +38,7 @@
     		 <th>Select Task</th>
   			</tr>
   		 <thead>
+  		 <!-- Table body binded with angular and ng-repeat to show all tasks, users can delete and edit slected tasks here -->
   		 <tbody data-ng-repeat="task in tasks track by $index"> 
   			<tr>
     		 <td id="name" contenteditable="false" data-ng-keydown="editEnter($index)" data-ng-dblclick="contentEdit($index)">{{task.name}}</td>
@@ -43,6 +48,7 @@
   		 </tbody>
         </table> 
         </div>
+        <!-- Second column much less wide holds the edit and delete buttons -->
       <div class="col-md-2" style="padding-top:130px;">
          <center><input style="background-color: #327BF0; margin-bottom:30px; color:white;" type="button" value="Edit" class="form-control" data-ng-click="editTask()"></center>
          <center><input style="background-color: #327BF0; color:white;" type="button" value="Delete" class="form-control" data-ng-click="deleteTask()"></center>
@@ -56,8 +62,7 @@
 	<center><h3 id="footerLabel">Copyright 2016 GMIT</h3></center>
 	</div>
 </div>
-
-</div>
+</div><!-- End scope for manage tasks controller area -->
 
 
 
