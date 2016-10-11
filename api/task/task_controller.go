@@ -167,6 +167,7 @@ func handleTaskDelete(w http.ResponseWriter, r *http.Request) {
 			common.RespondHTTPErr(w, r, http.StatusBadRequest,
 				&common.ErrorBody{Src: "API.TASK.REQUEST.PARSE", Code: 400, Desc: "Failed to parse request body"})
 		}else{
+			log.Println("ids: ", taskids)
 			if result, isSuccess = DeleteTasks(db, taskids, user.UserID); !isSuccess {
 				common.RespondHTTPErr(w, r, http.StatusBadRequest,
 					result)

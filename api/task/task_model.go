@@ -133,7 +133,8 @@ func DeleteTask(db *mgo.Database, taskId string, ownerId bson.ObjectId) (interfa
 func DeleteTasks(db *mgo.Database, taskIds *TaskIdList, ownerId bson.ObjectId) (interface{}, bool){
 	c := db.C(dbCollection)
 
-	if err := c.Remove(bson.M{"_id": bson.M{"$in":taskIds.Ids}, "_ownerId": ownerId}); err == nil {
+	log.Println("delete ids: ", taskIds)
+	if _, err := c.RemoveAll(bson.M{"_id": bson.M{"$in":taskIds.Ids}, "_ownerId": ownerId}); err == nil {
 		return &common.SuccessBody{Success: true, Result: true},
 			true
 	}else{
