@@ -63,7 +63,7 @@
           <center><h2 style="color:blue;">Task List Area</h2></center>
           <div style="height:400px; overflow-y:scroll;">
           <ul class="list-group">
-          <li style="font-family:Tahoma;" data-ng-dblclick="showTask($index)" class="list-group-item" data-ng-repeat="task in tasks track by $index">
+          <li style="font-family:Tahoma; cursor: pointer;" data-ng-dblclick="showTask($index)" class="list-group-item" data-ng-repeat="task in tasks track by $index">
 				{{ task.name }}
 		  </li>
 		  </ul>
