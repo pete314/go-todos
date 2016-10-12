@@ -12,7 +12,7 @@ app.controller('loginController', function($scope, $http, $location, localStorag
 		.then(
 			function(response){//if success
 				$("#successDialog").html("User created successfully, please login with your creditials");	//add info to dialog
-				$("#successDialog").dialog("open"); 			//show the error dialog	
+				$("#successDialog").dialog("open"); 			//show the success dialog	
 			}, 
 			function(response){//if error
 				$("#errorDialog").html("User was not created, did you leave out some information?");//add info to dialog
@@ -40,7 +40,7 @@ app.controller('loginController', function($scope, $http, $location, localStorag
 	}//end login event
 	
 	var createDialogs = function(){
-		appServices.createAllDialogs();//services(RoutingandServices.js) has utility method to create all UI popup dialogs
+		appServices.createCommonDialogs();//services(RoutingandServices.js) has utility method to create common UI popup dialogs
 	}
 	
 	createDialogs();//Call the create dialog method defined above

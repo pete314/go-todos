@@ -59,7 +59,7 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
          {
         	 $('#successDialog').dialog('option', 'title', "Successful Task Deletion");	//set title to the tasks name
 			 $("#successDialog").html("The selected tasks have been deleted");	//add info to dialog
-			 $("#successDialog").dialog("open"); 			//show the error dialog	
+			 $("#successDialog").dialog("open"); 			//show the success dialog	
         	 taskIdCheckList = [];    //empty the current checklist
 			 getTasks();			  //Retrieve the tasks again (fresh lists)
          },
@@ -75,6 +75,10 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 	//Whenever a checkbox is checked call this function, check or uncheck the corresponding value in the check list.
 	$scope.statusChanged = function(index){
 		
+		////////////////////testing
+		console.log(index);
+		console.log(taskIdCheckList[index].taskId);
+		/////////////////////////////////////////////
 		if(taskIdCheckList[index].checked == "false")
 		{
 			taskIdCheckList[index].checked = "true";
@@ -96,6 +100,8 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 		{
 			event.target.contentEditable = "false";
 		}
+		//something like this needed...may have to create two separate methods, one for edit name and another for content.
+		//$scope.tasks[task].taskMessage = event.target.innerText; 
 	}
 	
 	//Send edited task, user can only edit one task at a single time
@@ -114,11 +120,13 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 		 
 		 if(editCount == 1){
 			 $scope.tasks[indexEdit].id = taskIdCheckList[indexEdit].taskId;//Make sure we have the correct task id
-			 $scope.tasks[indexEdit].name = ((document.getElementById("name")).innerHTML).trim();
-			 $scope.tasks[indexEdit].content = ((document.getElementById("content")).innerHTML).trim();
-			 
-			 
-			 var updateTask = new UpdateTask($scope.tasks[indexEdit].id, $scope.tasks[indexEdit].name, $scope.tasks[indexEdit].content);
+			 //$scope.tasks[indexEdit].name = ((document.getElementById("name")).innerHTML).trim();
+			 //$scope.tasks[indexEdit].content = ((document.getElementById("content")).innerHTML).trim();
+			 console.log(((document.getElementById("name")).innerHTML).trim());
+			 console.log(((document.getElementById("content")).innerHTML).trim());
+			 console.log(indexEdit);
+			 console.log($scope.tasks[indexEdit].id +" "+$scope.tasks[indexEdit].name+" "+$scope.tasks[indexEdit].content);
+			/* var updateTask = new UpdateTask($scope.tasks[indexEdit].id, $scope.tasks[indexEdit].name, $scope.tasks[indexEdit].content);
 			 var jsonUpdateTask = angular.toJson(updateTask);//convert object to json
 			 //Sent http put to update the task
 			 $http.put(rootURL + updateTaskUrl + updateTask.id, jsonUpdateTask, {
@@ -138,7 +146,7 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 						$("#errorDialog").html("Were sorry - there was a problem updating the selected task");	//add info to dialog
 						$("#errorDialog").dialog("open"); 			//show the error dialog	
 					}
-				);	
+				);	*/
 		 }
 		 else{
 			 alert("You can only edit one task at a single time, you either have to many or no tasks checked.");
@@ -155,7 +163,7 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 	}
 	
 	var createDialogs = function(){
-		appServices.createAllDialogs();//services(RoutingandServices.js) has utility method to create all UI popup dialogs
+		appServices.createCommonDialogs();//services(RoutingandServices.js) has utility method to create common UI popup dialogs
 	}
 	
 	createDialogs();//Call the create dialog method defined above

@@ -40,7 +40,7 @@ app.controller('profileController', function($scope, appServices, localStorageSe
 			function(response){//if success
 				$('#successDialog').dialog('option', 'title', "Successful Update");	//set title to the tasks name
 				$("#successDialog").html("Your details were updated successfully");	//add info to dialog
-				$("#successDialog").dialog("open"); 			//show the error dialog	
+				$("#successDialog").dialog("open"); 			//show the success dialog	
 				getUserData();					//View is updated
 			}, 
 			function(response){//if error
@@ -76,7 +76,7 @@ app.controller('profileController', function($scope, appServices, localStorageSe
     }
     
     var createDialogs = function(){
-		appServices.createAllDialogs();//services(RoutingandServices.js) has utility method to create all UI popup dialogs
+		appServices.createCommonDialogs();//services(RoutingandServices.js) has utility method to create common UI popup dialogs
 	}
 	
 	createDialogs();//Call the create dialog method defined above

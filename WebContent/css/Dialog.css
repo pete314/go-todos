@@ -94,6 +94,11 @@
     	font-weight: bold;
     }
     
+    #showTaskDialog.editable{ 
+    	background:#239EEB;
+    	border-radius:2px;
+    }
+    
     .showTaskDialogStyle .ui-dialog-buttonpane { 
         background-color: #327BF0;
         border: 0px solid #327BF0;
@@ -113,12 +118,31 @@
     	color: white;
     }
     
+    .ui-dialog button.stEditButton { 
+    	background-color: #63BBF2; 
+    	color: white;
+    	font-weight: bold;
+    	outline: none;
+    	border-radius: 5px !important;
+     	border: 0px solid #E33434 !important;
+    }
     
+    .ui-dialog button.stEditButton:hover { 
+    	background-color: #2BA4F0; 
+    	color: white;
+    }
     
+    .ui-dialog button.stUpdateButton { 
+    	background-color: #63BBF2; 
+    	color: white;
+    	font-weight: bold;
+    	outline: none;
+    	border-radius: 5px !important;
+     	border: 0px solid #E33434 !important;
+    }
     
-    
-    
-    
-    
-    
+    .ui-dialog button.stUpdateButton:hover { 
+    	background-color: #2BA4F0; 
+    	color: white;
+    }
     /*End CSS for custom error and success JQuery dialog boxes*/
