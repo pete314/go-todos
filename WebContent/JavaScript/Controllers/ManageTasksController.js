@@ -25,7 +25,7 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 	
 	//Function is apart of for-each loop above, pushes each task id to list along with a 'checked' value
 	function createCheckList(result){
-		taskIdCheckList.push({'taskId':result.id, 'checked':'false'});
+		taskIdCheckList.push({'taskId':result.id, 'name':result.name, 'content':result.content, 'checked':'false'});
 	}
 	
 	getTasks();//Called when this controller (ManageTasks.html) is navigated to. gets all tasks from the API.
@@ -75,10 +75,6 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 	//Whenever a checkbox is checked call this function, check or uncheck the corresponding value in the check list.
 	$scope.statusChanged = function(index){
 		
-		////////////////////testing
-		console.log(index);
-		console.log(taskIdCheckList[index].taskId);
-		/////////////////////////////////////////////
 		if(taskIdCheckList[index].checked == "false")
 		{
 			taskIdCheckList[index].checked = "true";
@@ -89,7 +85,7 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 		}
 	}
 	
-	//When user double clicks on an item make it editable
+	//When user double clicks task content on an item make it editable click again make it uneditable
 	$scope.contentEdit = function(task){ 
 		
 		if(event.target.contentEditable == "false")
@@ -100,8 +96,54 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 		{
 			event.target.contentEditable = "false";
 		}
-		//something like this needed...may have to create two separate methods, one for edit name and another for content.
-		//$scope.tasks[task].taskMessage = event.target.innerText; 
+		
+		taskIdCheckList[task].content = event.target.innerText;
+	}
+	
+	//When user double clicks on task name make it editable click again make it uneditable
+	$scope.contentNameEdit = function(task){ 
+		
+		if(event.target.contentEditable == "false")
+		{
+			event.target.contentEditable = "true";
+		}
+		else
+		{
+			event.target.contentEditable = "false";
+		}
+		
+		taskIdCheckList[task].name = event.target.innerText;
+	}
+	
+	//When user hits the enter key call content edit again which controls if field is currently editable
+	$scope.editEnter = function(task){
+		
+		if(event.keyCode == 13)
+		{
+			$scope.contentEdit(task);
+			taskIdCheckList[task].content= event.target.innerText;
+		}
+	}
+	
+	$scope.editNameEnter = function(task){
+		
+		if(event.keyCode == 13)
+		{
+			$scope.contentNameEdit(task);
+			taskIdCheckList[task].name = event.target.innerText;
+		}
+	}
+	
+	//Angular lost focus event fired when control loses focus
+	$scope.saveNameData = function(task){
+		$scope.contentNameEdit(task);//Content not editable anymore
+		taskIdCheckList[task].name = event.target.innerText;//update the data
+	}
+	
+	//Angular lost focus event fired when control loses focus
+	$scope.saveData = function(task){
+		$scope.contentEdit(task);				//Content not editable anymore
+		taskIdCheckList[task].content= event.target.innerText;//update the data
 	}
 	
 	//Send edited task, user can only edit one task at a single time
@@ -120,13 +162,9 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 		 
 		 if(editCount == 1){
 			 $scope.tasks[indexEdit].id = taskIdCheckList[indexEdit].taskId;//Make sure we have the correct task id
-			 //$scope.tasks[indexEdit].name = ((document.getElementById("name")).innerHTML).trim();
-			 //$scope.tasks[indexEdit].content = ((document.getElementById("content")).innerHTML).trim();
-			 console.log(((document.getElementById("name")).innerHTML).trim());
-			 console.log(((document.getElementById("content")).innerHTML).trim());
-			 console.log(indexEdit);
-			 console.log($scope.tasks[indexEdit].id +" "+$scope.tasks[indexEdit].name+" "+$scope.tasks[indexEdit].content);
-			/* var updateTask = new UpdateTask($scope.tasks[indexEdit].id, $scope.tasks[indexEdit].name, $scope.tasks[indexEdit].content);
+			 $scope.tasks[indexEdit].name = taskIdCheckList[indexEdit].name;//Make sure we have the correct task id
+			 $scope.tasks[indexEdit].content = taskIdCheckList[indexEdit].content;//Make sure we have the correct task id
+			 var updateTask = new UpdateTask($scope.tasks[indexEdit].id, $scope.tasks[indexEdit].name, $scope.tasks[indexEdit].content);
 			 var jsonUpdateTask = angular.toJson(updateTask);//convert object to json
 			 //Sent http put to update the task
 			 $http.put(rootURL + updateTaskUrl + updateTask.id, jsonUpdateTask, {
@@ -145,21 +183,16 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 						$('#errorDialog').dialog('option', 'title', "Problem Updating Task");	//set title to the tasks name
 						$("#errorDialog").html("Were sorry - there was a problem updating the selected task");	//add info to dialog
 						$("#errorDialog").dialog("open"); 			//show the error dialog	
+						taskIdCheckList = [];    //empty the current checklist
+						getTasks();			  //Retrieve the tasks again (fresh lists)
 					}
-				);	*/
+				);	
 		 }
 		 else{
-			 alert("You can only edit one task at a single time, you either have to many or no tasks checked.");
+			 $('#errorDialog').dialog('option', 'title', "Cant Edit");	//set title to the tasks name
+			 $("#errorDialog").html("You have either selected no tasks or more than one. You can only edit one task at a time");	//add info to dialog
+			 $("#errorDialog").dialog("open"); 			//show the error dialog	
 		 }
-	}
-	
-	//When user hits the enter key call content edit again which controls if field is currently editable
-	$scope.editEnter = function(task){
-		
-		if(event.keyCode == 13)
-		{
-			$scope.contentEdit(task);
-		}
 	}
 	
 	var createDialogs = function(){
