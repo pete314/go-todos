@@ -77,7 +77,7 @@ func handleUserGet(w http.ResponseWriter, r *http.Request) {
 	p := common.ParseRequestUri(mux.Vars(r))
 	user := common.GetVar(r, "user").(*common.AuthModel)
 
-	if p.Action != "get" || strings.Compare(user.UserID.Hex(), p.ID) == 0{
+	if p.Action != "get" || strings.Compare(user.UserID.Hex(), p.ID) != 0{
 		common.RespondHTTPErr(w, r, http.StatusBadRequest,
 			&common.ErrorBody{Src: "API.USER.REQUEST.VALIDATION", Code: 400,
 				Desc: "Invalid request type GET>>get"})
