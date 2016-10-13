@@ -13,6 +13,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"log"
 	"golang.org/x/crypto/bcrypt"
+	"strings"
 )
 
 //Module controller constants
@@ -74,7 +75,9 @@ func userController(w http.ResponseWriter, r *http.Request) {
 func handleUserGet(w http.ResponseWriter, r *http.Request) {
 	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))
-	if p.Action != "get" {
+	user := common.GetVar(r, "user").(*common.AuthModel)
+
+	if p.Action != "get" || strings.Compare(user.UserID.Hex(), p.ID) == 0{
 		common.RespondHTTPErr(w, r, http.StatusBadRequest,
 			&common.ErrorBody{Src: "API.USER.REQUEST.VALIDATION", Code: 400,
 				Desc: "Invalid request type GET>>get"})
@@ -175,6 +178,7 @@ func handleUserLogin(r *http.Request) (int, interface{}, bool){
 func handleUserPut(w http.ResponseWriter, r *http.Request) {
 	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))
+	uAuth := common.GetVar(r, "user").(*common.AuthModel)
 	var u *User
 
 	if err := common.DecodeBody(r, &u); err != nil {
@@ -184,7 +188,7 @@ func handleUserPut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Password field is removed as it is pushed to the patch
-	if p.Action == "update" && p.ID != "" &&
+	if p.Action == "update" && p.ID != "" && strings.Compare(uAuth.UserID.Hex(), p.ID) == 0 &&
 		u.Dob != "" &&
 		u.Email != "" && valid.IsEmail(u.Email) &&
 		u.Firstname != "" &&
@@ -207,6 +211,7 @@ func handleUserPut(w http.ResponseWriter, r *http.Request) {
 func handleUserPatch(w http.ResponseWriter, r *http.Request) {
 	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))
+	uAuth := common.GetVar(r, "user").(*common.AuthModel)
 	var u *User
 
 	if err := common.DecodeBody(r, &u); err != nil {
@@ -216,7 +221,7 @@ func handleUserPatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vField, vValue, isValid := checkFiledValue(u, p.Param)
-	if isValid{
+	if isValid && strings.Compare(uAuth.UserID.Hex(), p.ID) == 0{
 		if result, isSuccess := EditUser(db, p.ID, vField, vValue); isSuccess{
 			common.Respond(w, r, http.StatusAccepted, &result)
 		}else{
@@ -264,10 +269,11 @@ func checkFiledValue(u *User, f string) (string, string, bool){
 func handleUserDelete(w http.ResponseWriter, r *http.Request) {
 	db := common.GetVar(r, "db").(*mgo.Database)
 	p := common.ParseRequestUri(mux.Vars(r))
+	uAuth := common.GetVar(r, "user").(*common.AuthModel)
 	var result interface{}
 	isSuccess := false
 
-	if result, isSuccess = DeleteUser(db, p.ID); !isSuccess{
+	if result, isSuccess = DeleteUser(db, p.ID); !isSuccess || strings.Compare(uAuth.UserID.Hex(), p.ID) != 0{
 		common.RespondHTTPErr(w, r, http.StatusBadRequest,
 			result)
 	}else{
