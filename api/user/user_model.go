@@ -84,10 +84,13 @@ func CreateUser(db *mgo.Database, res *common.Resource, u *User) (int, interface
 	u.Updated = time.Now()
 
 	if err := c.Insert(u); err == nil {
+		cont := &common.EmailContent{ToAddress:u.Email, ToName: u.Firstname + " "+u.Surname, Subject: "Welcome to go-todos", Body:getWelcomeText(u.Firstname)}
+		common.SendWelcomeEmail(cont)
 		return http.StatusAccepted,
 			&common.SuccessBody{Success: true, Result: "v0.1/user/get/" + u.ID.Hex()},
 			true
 	} else {
+		log.Println(err)
 		return http.StatusInternalServerError,
 			&common.ErrorBody{Src: "API.USER.CREATE.DB", Code: 500, Desc: "Error while storing user"},
 			false
@@ -172,5 +175,9 @@ func UpdateUser(db *mgo.Database, u *User)(interface{}, bool){
 	return &common.ErrorBody{Src: "API.USER.REQUEST.VALIDATE", Code: 404,
 		Desc: "User not found, did not delete user"},
 		false
+}
+
+func getWelcomeText(firstname string) string{
+	return "Hello " + firstname + "! \n Welcome to go-todo's you can log in at https://todo.gcraic.com!\n\n Regards, Joe Sergio"
 }
 

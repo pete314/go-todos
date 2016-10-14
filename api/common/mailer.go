@@ -6,12 +6,13 @@ package common
 
 import(
 	"gopkg.in/gomail.v2"
-	"io"
-	"fmt"
+	"log"
+	"os"
+	"encoding/json"
 )
 
 const(
-	senderHeader = "Todo team <gotodos@gcraic.com>"
+	senderHeader = "Joe Sergio <segios.gmit@gmail.com>"
 )
 
 type EmailContent struct{
@@ -28,30 +29,68 @@ type SMPTConfig struct{
 	Password string
 }
 
-func SendMail(ec *EmailContent, template string) bool{
-	m := gomail.NewMessage()
-	m.SetHeader("From", senderHeader)
-	m.SetHeader("Reply-To", senderHeader)
-	m.SetHeader("To", ec.ToName + "<"+ec.ToAddress+">")
-	m.SetHeader("Subject", ec.Subject)
-	m.SetBody("text/plain", "Hello!")
+//Send email to single receiver
+//@todo: Config should come from cache
+func SendMail(ec *EmailContent) bool{
+	if conf, ok := loadSMTPConfig(); ok {
+		m := gomail.NewMessage()
+		m.SetHeader("From", senderHeader)
+		m.SetHeader("Reply-To", senderHeader)
+		m.SetHeader("To", ec.ToName + "<" + ec.ToAddress + ">")
+		m.SetHeader("Subject", ec.Subject)
+		m.SetBody("text/plain", "Hello !")
 
-	s := gomail.SendFunc(func(from string, to []string, msg io.WriterTo) error {
-		// Implements you email-sending function, for example by calling
-		// an API, or running postfix, etc.
-		fmt.Println("From:", from)
-		fmt.Println("To:", to)
-		return nil
-	})
+		d := gomail.NewDialer(conf.Server, conf.Port, conf.Username, conf.Password)
 
-	if err := gomail.Send(s, m); err != nil {
-		panic(err)
+		if err := d.DialAndSend(m); err != nil {
+			log.Println(err)
+			return false
+		}
+
+		return true
+	}else{
+		log.Println("Could not load smtp config from config/")
+		return false
 	}
-
-	return true
 }
 
+func SendWelcomeEmail(ec *EmailContent) bool{
+	if conf, ok := loadSMTPConfig(); ok {
+		m := gomail.NewMessage()
+		m.SetHeader("From", senderHeader)
+		m.SetHeader("Reply-To", senderHeader)
+		m.SetHeader("To", ec.ToName + "<" + ec.ToAddress + ">")
+		m.SetHeader("Subject", ec.Subject)
+		m.SetBody("text/plain", ec.Body)
 
+		d := gomail.NewDialer(conf.Server, conf.Port, conf.Username, conf.Password)
+
+		if err := d.DialAndSend(m); err != nil {
+			log.Println(err)
+			return false
+		}
+
+		return true
+	}else{
+		log.Println("Could not load smtp config from config/")
+		return false
+	}
+}
+
+//Load config file
 func loadSMTPConfig() (SMPTConfig, bool){
-
+	currPath, _ := os.Getwd()
+	file, e:= os.Open(currPath+ "/config/smtp.local.json")
+	if e != nil{
+		log.Println(e)
+	}
+	decoder := json.NewDecoder(file)
+	configuration := SMPTConfig{}
+	err := decoder.Decode(&configuration)
+	if err != nil {
+		log.Println(err, file)
+		return SMPTConfig{}, false
+	}else{
+		return configuration, true
+	}
 }
