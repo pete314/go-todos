@@ -77,3 +77,6 @@ local.properties
 
 #Intellij
 /.idea/
+
+# Ignore config files
+*.local.json

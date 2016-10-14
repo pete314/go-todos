@@ -27,6 +27,7 @@ SET sources[2]="github.com/stretchr/graceful"
 SET sources[3]="github.com/gorilla/mux"
 SET sources[4]="golang.org/x/crypto/bcrypt"
 SET sources[4]="github.com/asaskevich/govalidator"
+SET sources[4]="gopkg.in/gomail.v2"
 
 
 for /F "tokens=2 delims==" %%s in ('set sources[') do go get %%s

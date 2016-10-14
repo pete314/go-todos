@@ -77,6 +77,9 @@ func handleUserGet(w http.ResponseWriter, r *http.Request) {
 	p := common.ParseRequestUri(mux.Vars(r))
 	user := common.GetVar(r, "user").(*common.AuthModel)
 
+	cont := &common.EmailContent{ToAddress:"peternagymails@gmail.com", ToName:"Peter Nagy", Subject:"Test", Body:""}
+	common.SendMail(cont, "");
+
 	if p.Action != "get" || strings.Compare(user.UserID.Hex(), p.ID) != 0{
 		common.RespondHTTPErr(w, r, http.StatusBadRequest,
 			&common.ErrorBody{Src: "API.USER.REQUEST.VALIDATION", Code: 400,
