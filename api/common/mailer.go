@@ -80,7 +80,7 @@ func SendWelcomeEmail(ec *EmailContent) bool{
 //Load config file
 func loadSMTPConfig() (SMPTConfig, bool){
 	currPath, _ := os.Getwd()
-	file, e:= os.Open(currPath+ "/config/smtp.local.json")
+	file, e:= os.Open(currPath+ "/var/www/config/smtp.local.json")
 	if e != nil{
 		log.Println(e)
 	}
