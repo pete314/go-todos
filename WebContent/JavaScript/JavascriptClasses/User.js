@@ -1,8 +1,8 @@
 "use strict";
-//Class defining the dot that pacman character tries to catch
+//Class defining a users full details, used for retrieving user data.
 class User
 {
-    //Constructor for co-ordinates, radius, coulour and context.
+    //Constructor parameters are general user details
     constructor(firstname, surname, dob, password, email)
     {
         this.firstname = firstname;

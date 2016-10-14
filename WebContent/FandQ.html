@@ -10,7 +10,7 @@
             <span id="menuToggle" class="icon-bar"></span>
             <span id="menuToggle" class="icon-bar"></span>
        </button>
-		<a id="logo" class="navbar-brand" href="">Task Manager</a>
+		<a id="logo" class="navbar-brand" href="#/dashboard">Task Manager</a>
 		</div>
 		<div id="mainNavbar" class="navbar-collapse collapse" aria-expanded="true">
          <ul class="nav navbar-nav navbar-right">
@@ -59,23 +59,18 @@
 	   </div>
 	   <!-- Second column contains a form so user can ask a question -->
        <div class="col-md-6" style="">
-          <center><h2>Ask us a question</h2></center> 
+          <center><h2>Contact Us</h2></center> 
           <form class="form-horizontal">
 			<div class="container-fluid">
 			<br>
       			<div class="form-group">
           			<div class="col-md-8">
-           			<input type="text" placeholder="Input question title here" data-ng-model="questionTitle" class="form-control">
+           			<input type="text" placeholder="Input question title here" data-ng-model="subject" class="form-control">
           			</div>
       			</div>
       			<div class="form-group">
           			<div class="col-md-12">
-           			<textarea class="form-control" placeholder="Input question decription here" data-ng-model="questionDescription" rows="8" cols="50"></textarea>
-          			</div>
-      			</div>
-      			<div class="form-group">
-          			<div class="col-md-8">
-           			<input type="text" placeholder="Input your email here so we can answer you" data-ng-model="responseEmail" class="form-control">
+           			<textarea class="form-control" placeholder="Input question decription here" data-ng-model="content" rows="8" cols="50"></textarea>
           			</div>
       			</div>
       			<div class="form-group">

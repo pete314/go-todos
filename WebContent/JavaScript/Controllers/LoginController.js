@@ -11,10 +11,12 @@ app.controller('loginController', function($scope, $http, $location, localStorag
 		$http.post(rootURL + endpointNewUser, jsonNewUser, config)
 		.then(
 			function(response){//if success
+				$('#successDialog').dialog('option', 'title', "Successful User Creation");	//set title of the dialog
 				$("#successDialog").html("User created successfully, please login with your creditials");	//add info to dialog
 				$("#successDialog").dialog("open"); 			//show the success dialog	
 			}, 
 			function(response){//if error
+				$('#errorDialog').dialog('option', 'title', "Unsuccessful User Creation");	//set title of the dialog
 				$("#errorDialog").html("User was not created, did you leave out some information?");//add info to dialog
 				$("#errorDialog").dialog("open"); 			//show the error dialog
 			}
@@ -33,6 +35,7 @@ app.controller('loginController', function($scope, $http, $location, localStorag
 				logUserIn(response);			//log user in, defined at bottom of this controller
 			}, 
 			function(response){//if error
+				$('#errorDialog').dialog('option', 'title', "Unsuccessful Login");	//set title of the dialog
 				$("#errorDialog").html("User not found, or invalid password");	//add info to dialog
 				$("#errorDialog").dialog("open"); 			//show the error dialog	
 			}

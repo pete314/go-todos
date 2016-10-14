@@ -1,8 +1,8 @@
 "use strict";
-//Class defining the dot that pacman character tries to catch
+//Class defining a task that is being updated
 class UpdateTask
 {
-    //Constructor for co-ordinates, radius, coulour and context.
+    //Constructor parameters are the id of the task for update, task name and content. 
     constructor(id, name, content)
     {
     	this.id = id;

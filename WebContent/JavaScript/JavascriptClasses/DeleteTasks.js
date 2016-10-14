@@ -1,8 +1,8 @@
 "use strict";
-//Class defining the dot that pacman character tries to catch
+//Class defining tasks the need to be deleted
 class DeleteTasks
 {
-    //Constructor for co-ordinates, radius, coulour and context.
+    //Constructor parameter is a list of task ids
     constructor(delete_ids)
     {
         this.delete_ids = delete_ids;

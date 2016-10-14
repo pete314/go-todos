@@ -12,6 +12,7 @@ var endpointNewUser = 'user/new';
 //Dashboard endpoints
 var newTaskUrl = "task/new";
 var getTaskListUrl = "task/get";
+var endpointQuestion = "";
 
 
 var config = {
@@ -40,7 +41,6 @@ app.service('appServices', function($location, localStorageService){
 				$("#errorDialog").dialog({	//Attach dialog to div with errorDialog id
 					autoOpen: false,		//Dont open stright away
 					modal: true,		//Dialog has modal behavior, other items on the page will be disabled & cant be interacted with. 
-					title: "Error Adding New Task",		//The dialog boxes title
 					dialogClass: 'errorDialogStyle', //The class name of the dialog box used for CSS styling
 					width: 290,						//The width of the dialog box
 					open: function(event, ui) {		//Function called when dialog box opens
@@ -60,7 +60,6 @@ app.service('appServices', function($location, localStorageService){
 				$("#successDialog").dialog({	//Attach dialog to div with successDialog id
 					autoOpen: false,			//Dont open stright away
 					modal: true,			//Dialog has modal behavior, other items on the page will be disabled & cant be interacted with.
-					title: "Successful Task Creation",	//The dialog boxes title
 					dialogClass: 'successDialogStyle', //The class name of the dialog box
 					width: 290,	//The width of the dialog box
 					open: function(event, ui) {	//Function called when dialog box opens

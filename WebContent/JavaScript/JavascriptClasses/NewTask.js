@@ -1,8 +1,8 @@
 "use strict";
-//Class defining the dot that pacman character tries to catch
+//Class defining and brand new task
 class NewTask
 {
-    //Constructor for co-ordinates, radius, coulour and context.
+    //Constructor parameters are the task name and content, some other hardcoded values for now
     constructor(name, content)
     {
         this.name = name;

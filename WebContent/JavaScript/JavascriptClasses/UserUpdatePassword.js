@@ -1,8 +1,8 @@
 "use strict";
-//Class defining the dot that pacman character tries to catch
+//Class defining update details needed for password change from logged in user
 class UserUpdatePassword
 {
-    //Constructor for co-ordinates, radius, coulour and context.
+    //only parameter is the new password
     constructor(password)
     {
         this.password = password;

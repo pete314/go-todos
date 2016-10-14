@@ -17,7 +17,7 @@ app.controller('profileController', function($scope, appServices, localStorageSe
 				outputUserData(response);//call function to output the user data to the view (defined below)
 			}, 
 			function(response){//if error
-				$('#errorDialog').dialog('option', 'title', "Problem Retrieving User Data");	//set title to the tasks name
+				$('#errorDialog').dialog('option', 'title', "Problem Retrieving User Data");	//set title of the dialog
 				$("#errorDialog").html("Were sorry - there was a problem retrieving your details");	//add info to dialog
 				$("#errorDialog").dialog("open"); 			//show the error dialog	
 			}
@@ -38,13 +38,13 @@ app.controller('profileController', function($scope, appServices, localStorageSe
 		})
 		.then(
 			function(response){//if success
-				$('#successDialog').dialog('option', 'title', "Successful Update");	//set title to the tasks name
+				$('#successDialog').dialog('option', 'title', "Successful Update");	//set title of the dialog
 				$("#successDialog").html("Your details were updated successfully");	//add info to dialog
 				$("#successDialog").dialog("open"); 			//show the success dialog	
 				getUserData();					//View is updated
 			}, 
 			function(response){//if error
-				$('#errorDialog').dialog('option', 'title', "Problem Updating Details");	//set title to the tasks name
+				$('#errorDialog').dialog('option', 'title', "Problem Updating Details");	//set title of the dialog
 				$("#errorDialog").html("Were sorry - there was a problem updating your details");	//add info to dialog
 				$("#errorDialog").dialog("open"); 			//show the error dialog	
 			}

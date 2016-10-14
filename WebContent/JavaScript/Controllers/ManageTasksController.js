@@ -16,7 +16,7 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 				allResults.forEach(createCheckList);//For each result retrieved from response call this function (below)
 			}, 
 			function(response){//if error
-				$('#errorDialog').dialog('option', 'title', "Problem Retrieving Task Data");	//set title to the tasks name
+				$('#errorDialog').dialog('option', 'title', "Problem Retrieving Task Data");	//set title of the dialog
 				$("#errorDialog").html("Were sorry - there was a problem retrieving your tasks");	//add info to dialog
 				$("#errorDialog").dialog("open"); 			//show the error dialog	
 			}
@@ -57,7 +57,7 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
          },
          success: function(data)   // A function to be called if request succeeds
          {
-        	 $('#successDialog').dialog('option', 'title', "Successful Task Deletion");	//set title to the tasks name
+        	 $('#successDialog').dialog('option', 'title', "Successful Task Deletion");	//set title of the dialog
 			 $("#successDialog").html("The selected tasks have been deleted");	//add info to dialog
 			 $("#successDialog").dialog("open"); 			//show the success dialog	
         	 taskIdCheckList = [];    //empty the current checklist
@@ -65,7 +65,7 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
          },
          error: function(xhr, textStatus, errorThrown)
          {
-        	 $('#errorDialog').dialog('option', 'title', "Problem Deleting Selected Tasks");	//set title to the tasks name
+        	 $('#errorDialog').dialog('option', 'title', "Problem Deleting Selected Tasks");	//set title of the dialog
 			 $("#errorDialog").html("Were sorry - there was a problem deleting the selected tasks");	//add info to dialog
 			 $("#errorDialog").dialog("open"); 			//show the error dialog	
          }
@@ -173,14 +173,14 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 				})
 				.then(
 					function(response){//if success
-						$('#successDialog').dialog('option', 'title', "Successful Task Update");	//set title to the tasks name
+						$('#successDialog').dialog('option', 'title', "Successful Task Update");	//set title of the dialog
 						$("#successDialog").html("The selected task was successfully updated");	//add info to dialog
 						$("#successDialog").dialog("open"); 			//show the error dialog	
 						taskIdCheckList = [];    //empty the current checklist
 						getTasks();			  //Retrieve the tasks again (fresh lists)
 					}, 
 					function(response){//if error
-						$('#errorDialog').dialog('option', 'title', "Problem Updating Task");	//set title to the tasks name
+						$('#errorDialog').dialog('option', 'title', "Problem Updating Task");	//set title of the dialog
 						$("#errorDialog").html("Were sorry - there was a problem updating the selected task");	//add info to dialog
 						$("#errorDialog").dialog("open"); 			//show the error dialog	
 						taskIdCheckList = [];    //empty the current checklist
@@ -189,7 +189,7 @@ app.controller('manageTaskController', function($scope, appServices, $http, loca
 				);	
 		 }
 		 else{
-			 $('#errorDialog').dialog('option', 'title', "Cant Edit");	//set title to the tasks name
+			 $('#errorDialog').dialog('option', 'title', "Cant Edit");	//set title of the dialog
 			 $("#errorDialog").html("You have either selected no tasks or more than one. You can only edit one task at a time");	//add info to dialog
 			 $("#errorDialog").dialog("open"); 			//show the error dialog	
 		 }

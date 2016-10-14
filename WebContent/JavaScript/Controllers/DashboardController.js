@@ -13,11 +13,13 @@ app.controller('dashboardController', function($scope, appServices, $http, local
 			function(response){//if success
 				$scope.taskName = "";
 				$scope.taskDescription = "";
+				$('#successDialog').dialog('option', 'title', "Successful Task Creation");	//set title of the dialog
 				$("#successDialog").html("Your new task was successfully created");	//add info to dialog
 				$("#successDialog").dialog("open"); 			//show the error dialog	
 				getTasks();
 			}, 
 			function(response){//if error
+				$('#errorDialog').dialog('option', 'title', "Unsuccessful Task Creation");	//set title of the dialog
 				$("#errorDialog").html("New task was not created, did you enter data into all fields?");	//add info to dialog
 				$("#errorDialog").dialog("open"); 			//show the error dialog		
 			}
@@ -34,6 +36,7 @@ app.controller('dashboardController', function($scope, appServices, $http, local
 				$scope.tasks = response.data.Result;
 			}, 
 			function(response){//if error
+				$('#errorDialog').dialog('option', 'title', "Task Retrieval Error");	//set title of the dialog
 				$("#errorDialog").html("Were sorry - there appears to have been an issue retrieving your tasks");	//add info to dialog
 				$("#errorDialog").dialog("open"); 			//show the error dialog	
 			}
