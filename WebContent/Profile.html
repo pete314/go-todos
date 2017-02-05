@@ -1,0 +1,114 @@
+<!--Profile Controller Area-->
+<div data-ng-controller="profileController">
+<!-- Navbar Complete with icons for different user options -->
+<nav id="nav" class="navbar navbar-dark navbar-static-top">
+	<div class="container">
+		<div class="navbar-header">
+		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNavbar" aria-expanded="true" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span id="menuToggle" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
+       </button>
+		<a id="logo" class="navbar-brand" href="">Task Manager</a>
+		</div>
+		<div id="mainNavbar" class="navbar-collapse collapse" aria-expanded="true">
+         <ul class="nav navbar-nav navbar-right">
+          <li><a id="glyphicon" class="glyphicon glyphicon glyphicon-home" href="#/dashboard"></a></li>
+         <li><a id="glyphicon" class="glyphicon glyphicon-list-alt" href="#/manageTasks"></a></li>
+         <li><a id="glyphicon" class="glyphicon glyphicon-user" href="#/profile"></a></li>
+          <li><a id="glyphicon" class="glyphicon glyphicon-exclamation-sign" href="#/fandq"></a></li>
+           <li><a id="glyphicon" class="glyphicon glyphicon-log-in" data-ng-click="$event.preventDefault();logout()" href="/#"></a></li>
+         </ul>
+	   </div>
+	</div>
+</nav>
+
+<div id="successDialog" style="display:none;">
+</div>
+<div id="errorDialog" style="display:none;">
+</div>
+
+<!-- Container which has two columns -->
+<div class="container" style="margin-top:40px;">
+  	  <div class="row">
+  	  <!-- First column 9/12 wide and contains tow forms stacked vertically for updating user details and password-->
+        <div class="col-md-9"> 
+        <form class="form-horizontal">
+			<div class="container-fluid">
+			<br>
+      			<div class="form-group">
+      				<div class="col-md-2">
+      				<label id="signupInputLabel" class="control-label">Email:</label>
+      				</div>
+          			<div class="col-md-10">
+           			<input type="text" placeholder="Email goes here" data-ng-model="email" class="form-control">
+          			</div>
+      			</div>
+      			<div class="form-group">
+      				<div class="col-md-2">
+      				<label id="signupInputLabel" class="control-label">First Name:</label>
+      				</div>
+          			<div class="col-md-10">
+           			<input type="text" placeholder="First Name goes here" data-ng-model="firstname" class="form-control">
+          			</div>
+      			</div>
+      			<div class="form-group">
+      				<div class="col-md-2">
+      				<label id="signupInputLabel" class="control-label">Last Name:</label>
+      				</div>
+          			<div class="col-md-10">
+           			<input type="text" placeholder="Last Name goes here" data-ng-model="surname" class="form-control">
+          			</div>
+      			</div>
+      			<div class="form-group">
+      				<div class="col-md-2">
+      				<label id="signupInputLabel" class="control-label">Date Of Birth:</label>
+      				</div>
+          			<div class="col-md-10">
+           			<input id="datepicker" type="text" placeholder="yyyy/mm/dd" data-ng-model="dob" class="form-control">
+          			</div>
+      			</div>
+      			<div class="col-md-3">
+      			<input style="background-color: #327BF0; margin-left:-14px; margin-bottom:60px; color:white;" type="button" value="Update Profile" class="form-control" data-ng-click="updateProfile()">
+      	  		</div>
+      	  </div>
+		</form>
+		<form class="form-horizontal">
+			<div class="container-fluid">
+			<div class="form-group">
+      				<div class="col-md-2">
+      				<label id="signupInputLabel" class="control-label">Password:</label>
+      				</div>
+          			<div class="col-md-10">
+           			<input type="password" placeholder="Insert New Password Here" data-ng-model="password" class="form-control">
+          			</div>
+      			</div>
+      			<div class="col-md-3">
+      			<input style="background-color: #327BF0; margin-bottom:30px; margin-left:-14px; color:white;" type="button" value="Update Password" class="form-control" data-ng-click="updatePassword()">
+				</div>
+			</div>
+		</form>	
+        </div>
+      <div class="col-md-3" style="padding-top: 430px;">
+         <!-- Empty second column just to help with alignment of the elements -->
+      </div>
+     </div>
+</div>
+
+<!--A simple page footer-->
+<div id="footer">
+	<div class="container">
+	<center><h3 id="footerLabel">Copyright 2016 GMIT</h3></center>
+	</div>
+</div>
+
+</div>
+
+<!--Small scipt area for JQuery that allows the datepicker widget to work.-->
+<script type="text/javascript">
+$( function() {
+	$( "#datepicker" ).datepicker({changeMonth: true, changeYear: true, 
+		yearRange: '1930:'+new Date().getFullYear(), dateFormat: "yy-mm-dd"});
+});
+</script>

@@ -1,0 +1,100 @@
+<!--FandQ Controller Area-->
+<div data-ng-controller="FandQController">
+<!-- Navbar Complete with icons for different user options -->
+<nav id="nav" class="navbar navbar-dark navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header">
+		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNavbar" aria-expanded="true" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span id="menuToggle" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
+       </button>
+		<a id="logo" class="navbar-brand" href="">Task Manager</a>
+		</div>
+		<div id="mainNavbar" class="navbar-collapse collapse" aria-expanded="true">
+         <ul class="nav navbar-nav navbar-right">
+          <li><a id="glyphicon" class="glyphicon glyphicon glyphicon-home" href="#/dashboard"></a></li>
+         <li><a id="glyphicon" class="glyphicon glyphicon-list-alt" href="#/manageTasks"></a></li>
+         <li><a id="glyphicon" class="glyphicon glyphicon-user" href="#/profile"></a></li>
+          <li><a id="glyphicon" class="glyphicon glyphicon-exclamation-sign" href="#/fandq"></a></li>
+           <li><a id="glyphicon" class="glyphicon glyphicon-log-in" data-ng-click="$event.preventDefault();logout()" href="/#"></a></li>
+         </ul>
+	   </div>
+	</div>
+</nav>
+
+<!--Jumbotron with two columns-->
+<div class="jumbotron" style="background-color:#EDF2FA; margin-top:30px; postion:relative; height:75vh;">
+	<div class="container">
+  	  <div class="row">
+  	  <!-- First column just a scrollable area of Q and A type questions for the user -->
+        <div style="height:450px; overflow-y:scroll;" class="col-md-6">
+          <div class="container-fluid">
+			<br>
+      		 <div class="col-md-12">
+           	   <p style="font-weight: bold;">1. How do i use this application?</p>
+          	 </div>
+      	     <div class="col-md-12">
+           	   <p>Once logged into Task Manager all the options the the user needs are seen as icons in the
+           	   menu bar. These options include, manage tasks, profile settings, this FandQ page and logout.</p>
+          	 </div>
+          	 <div class="col-md-12">
+           	   <p style="font-weight: bold;">2. How do i use the Manage Tasks Feature?</p>
+          	 </div>
+      	     <div class="col-md-12">
+           	   <p>The manage tasks feature contains a table displaying each one of the users task and which ones
+           	   are currently important, done or not done using different colours. Beside each task is a checkbox
+           	   where the user can select one or multiple tasks. Once tasks have been selected a user can then choose
+           	   to finish, edit or delete a particular task.</p>
+          	 </div>
+          	 <div class="col-md-12">
+           	   <p style="font-weight: bold;">3. What can i do in the profile settings?</p>
+          	 </div>
+      	     <div class="col-md-12">
+           	   <p>The profile settings allow a user to change his/her password, email and name. It also allows
+           	   the user to disable or enable notification settings that alert a user when a task is coming up.</p>
+          	 </div>
+      	  </div>
+	   </div>
+	   <!-- Second column contains a form so user can ask a question -->
+       <div class="col-md-6" style="">
+          <center><h2>Ask us a question</h2></center> 
+          <form class="form-horizontal">
+			<div class="container-fluid">
+			<br>
+      			<div class="form-group">
+          			<div class="col-md-8">
+           			<input type="text" placeholder="Input question title here" data-ng-model="questionTitle" class="form-control">
+          			</div>
+      			</div>
+      			<div class="form-group">
+          			<div class="col-md-12">
+           			<textarea class="form-control" placeholder="Input question decription here" data-ng-model="questionDescription" rows="8" cols="50"></textarea>
+          			</div>
+      			</div>
+      			<div class="form-group">
+          			<div class="col-md-8">
+           			<input type="text" placeholder="Input your email here so we can answer you" data-ng-model="responseEmail" class="form-control">
+          			</div>
+      			</div>
+      			<div class="form-group">
+          			<div class="col-md-4">
+           			<input style="background-color: #327BF0; color:white;" type="button" value="Submit Question" class="form-control" data-ng-click="submitQuestion()">
+          			</div>
+      			</div>
+      	  </div>
+		</form>
+       </div>
+       </div>
+   </div>
+</div>
+
+<!--A simple page footer-->
+<div id="footer">
+	<div class="container">
+	<center><h3 id="footerLabel">Copyright 2016 GMIT </h3></center>
+	</div>
+</div>
+
+</div><!--End FandQController scope-->

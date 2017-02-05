@@ -1,0 +1,14 @@
+# Author: Peter Nagy - https://peternagy.ie 
+# Source: https://github.com/pete314/go-todos
+# Description: This script is meant to set up the development environment on Windows OS
+
+
+# Create database for the application
+use todo-api-data;
+
+# Create collection (otional)
+db.createCollection("user", {autoIndexID: true})
+db.createCollection("task", {autoIndexID: true})
+db.createCollection("api_auth", {autoIndexID: true})
+db.createCollection("app_log", {autoIndexID: true})
+db.createCollection("user_log", {autoIndexID: true})

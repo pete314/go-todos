@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="MainApp">
+  <head>
+   	<!--META DATA INCLUDES SETTINGS FOR DIFFERENT SCREEN SIZES-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--Ensures proper rendering for a mobile device-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!--JQUERY (NECESSARY FOR BOOTSTRAP, SOME AJAX CALLS AND UI WIDGETS)-->
+    <script src="JavaScript/JQuery/jquery-3.1.0.min.js"></script>
+    <link rel="stylesheet" href="JavaScript/JQuery/jquery-ui-themes-1.12.0/jquery-ui.css">	   <!--JQuery css for UI widgets-->
+    <script src="JavaScript/JQuery/jquery-ui-1.12.0/jquery-ui.js"></script>	<!--JQuery js for UI widgets-->
+    
+    <!--BOOTSTRAP -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- ADDITIONAL STYLESHEETS -->
+    <link href="css/Login.css" rel="stylesheet">
+    <link href="css/Global.css" rel="stylesheet">
+    <link href="css/Dialog.css" rel="stylesheet">
+    
+    <!--ANGULARJS FILES INCLUDING CONTROLLERS AND ROUTING SERVICES-->
+    <script type="text/javascript" src="JavaScript/AngularJS/angular.min.js"></script>
+    <script type="text/javascript" src="JavaScript/AngularJS/angular-route.min.js"></script><!--Angular Routing-->
+    <script type="text/javascript" src="JavaScript/AngularJS/angular-local-storage.min.js"></script><!--Angular Local Storage-->
+	<script type="text/javascript" src="JavaScript/Controllers/RoutingAndServices.js"></script>
+	<script type="text/javascript" src="JavaScript/Controllers/LoginController.js"></script>
+	<script type="text/javascript" src="JavaScript/Controllers/DashboardController.js"></script>
+   	<script type="text/javascript" src="JavaScript/Controllers/ProfileController.js"></script>
+   	<script type="text/javascript" src="JavaScript/Controllers/FandQController.js"></script>
+   	<script type="text/javascript" src="JavaScript/Controllers/ManageTasksController.js"></script>
+   
+     <!-- JAVASCRIPT EXTERNAL CLASSES USED TO SEND JSON VIA HTTP REQUESTS TO GO API -->
+     <script type="text/javascript" src="JavaScript/JavascriptClasses/User.js"></script>
+     <script type="text/javascript" src="JavaScript/JavascriptClasses/UserLogin.js"></script>
+     <script type="text/javascript" src="JavaScript/JavascriptClasses/UserUpdateAll.js"></script>
+     <script type="text/javascript" src="JavaScript/JavascriptClasses/UserUpdatePassword.js"></script>
+     <script type="text/javascript" src="JavaScript/JavascriptClasses/NewTask.js"></script>
+     <script type="text/javascript" src="JavaScript/JavascriptClasses/DeleteTasks.js"></script>
+     <script type="text/javascript" src="JavaScript/JavascriptClasses/UpdateTask.js"></script>
+    
+    <title>Task Manager</title> 
+  </head>
+  <!-- All pages are displayed through this ng-view -->
+  <body data-ng-view style="background-color: #EDF2FA;">
+  </body>
+</html>

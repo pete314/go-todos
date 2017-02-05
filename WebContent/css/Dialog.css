@@ -1,0 +1,148 @@
+/*CSS for custom error and success JQuery dialog boxes*/
+	.errorDialogStyle .ui-dialog-titlebar { 
+        background-color: #E33434;
+        color: #F08D8D;
+        font-weight: bold;
+        border-radius: 5px;
+        border: 0px solid black;
+    }
+    
+    .errorDialogStyle.ui-dialog { 
+        background-color: #F27474;
+        border-radius: 10px;
+        border: 0px solid #F27474;
+    }
+    
+    .errorDialogStyle .ui-dialog-content {
+    	color: #C42525;
+    	font-weight: bold;
+    }
+    
+    .errorDialogStyle .ui-dialog-buttonpane { 
+        background-color: #F27474;
+        border: 0px solid #F27474;
+    }
+    
+    .ui-dialog button.eClossButton { 
+    	background-color: #E33434; 
+    	color: #F08D8D;
+    	font-weight: bold;
+    	outline: none;
+    	border-radius: 5px !important;
+     	border: 0px solid #E33434 !important;
+    }
+    
+    .ui-dialog button.eClossButton:hover { 
+    	background-color: #DB3232; 
+    	color: #F0AAAA;
+    }
+    
+    .successDialogStyle .ui-dialog-titlebar { 
+        background-color: #508F4D;
+        color: #20ED15;
+        font-weight: bold;
+        border-radius: 5px;
+        border: 0px solid black;
+    }
+    
+    .successDialogStyle.ui-dialog { 
+        background-color: #16F70A;
+        border-radius: 10px;
+        border: 0px solid #16F70A;
+    }
+    
+    .successDialogStyle .ui-dialog-content {
+    	color: #509C4C;
+    	font-weight: bold;
+    }
+    
+    .successDialogStyle .ui-dialog-buttonpane { 
+        background-color: #16F70A;
+        border: 0px solid #16F70A;
+    }
+    
+    .ui-dialog button.sClossButton { 
+    	background-color: #508F4D; 
+    	color: #20ED15;
+    	font-weight: bold;
+    	outline: none;
+    	border-radius: 5px !important;
+     	border: 0px solid #508F4D !important;
+    }
+    
+    .ui-dialog button.sClossButton:hover { 
+    	background-color: #52824F; 
+    	color: #0FFA02;
+    }
+    
+    .showTaskDialogStyle .ui-dialog-titlebar { 
+        background-color:#327BF0;
+        color: white; 
+        font-weight: bold;
+        border-radius: 5px;
+        border: 0px solid black;
+    }
+    
+    .showTaskDialogStyle.ui-dialog { 
+        background-color: #63BBF2;
+        border-radius: 10px;
+        border: 0px solid #63BBF2;
+    }
+    
+    .showTaskDialogStyle .ui-dialog-content {
+    	color: white;
+    	font-weight: bold;
+    }
+    
+    #showTaskDialog.editable{ 
+    	background:#239EEB;
+    	border-radius:2px;
+    }
+    
+    .showTaskDialogStyle .ui-dialog-buttonpane { 
+        background-color: #327BF0;
+        border: 0px solid #327BF0;
+    }
+    
+    .ui-dialog button.stClossButton { 
+    	background-color: #63BBF2; 
+    	color: white;
+    	font-weight: bold;
+    	outline: none;
+    	border-radius: 5px !important;
+     	border: 0px solid #E33434 !important;
+    }
+    
+    .ui-dialog button.stClossButton:hover { 
+    	background-color: #2BA4F0; 
+    	color: white;
+    }
+    
+    .ui-dialog button.stEditButton { 
+    	background-color: #63BBF2; 
+    	color: white;
+    	font-weight: bold;
+    	outline: none;
+    	border-radius: 5px !important;
+     	border: 0px solid #E33434 !important;
+    }
+    
+    .ui-dialog button.stEditButton:hover { 
+    	background-color: #2BA4F0; 
+    	color: white;
+    }
+    
+    .ui-dialog button.stUpdateButton { 
+    	background-color: #63BBF2; 
+    	color: white;
+    	font-weight: bold;
+    	outline: none;
+    	border-radius: 5px !important;
+     	border: 0px solid #E33434 !important;
+    }
+    
+    .ui-dialog button.stUpdateButton:hover { 
+    	background-color: #2BA4F0; 
+    	color: white;
+    }
+    /*End CSS for custom error and success JQuery dialog boxes*/

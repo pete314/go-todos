@@ -1,0 +1,39 @@
+/*Styles for the glyphicon icons in the nav bar*/
+#glyphicon {
+	font-size:35px; 
+	color:white;
+}
+
+/*Sets the colour of the lines for the toggle meny button inside the navbar*/
+#menuToggle {
+	background-color:white;
+}
+
+/*Style of the nav bar area*/
+#nav {
+	background-color:#327BF0; 
+	margin-bottom:-20px;
+}
+
+/*Style of the 'Task Manager header'*/
+#logo {
+	color:white; 
+	font-family:Tahoma; 
+	font-size:180%;
+}
+
+#footerLabel {
+	color:#white;
+	font-weight:bold;
+	font-family:Comic Sans MS;
+}
+
+#footer{
+	width:100%; 
+	height:50px; 
+	border:none; 
+	color:white; 
+	background-color:#327BF0;
+	position: fixed;
+    bottom: 0;
+}

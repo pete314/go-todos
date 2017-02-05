@@ -1,0 +1,14 @@
+/*CSS for the labels of the signup form*/
+#signupInputLabel {
+	color:#327BF0;
+	font-weight:bold;
+	font-family:Comic Sans MS;
+}
+
+/*CSS for the signup form header*/
+#signupHeaderLabel {
+	color:#327BF0;
+	font-weight:bold;
+	font-family:Trebuchet MS;
+	font-style: oblique;
+}

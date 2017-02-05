@@ -1,0 +1,84 @@
+<!--Dashboard Controller Area-->
+<div data-ng-controller="dashboardController">
+<!-- Navbar Complete with icons for different user options -->
+<nav id="nav" class="navbar navbar-dark navbar-static-top">
+	<div class="container">
+		<div class="navbar-header">
+		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mainNavbar" aria-expanded="true" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span id="menuToggle" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
+            <span id="menuToggle" class="icon-bar"></span>
+       </button>
+		<a id="logo" class="navbar-brand" href="">Task Manager</a>
+		</div>
+		<div id="mainNavbar" class="navbar-collapse collapse" aria-expanded="true">
+         <ul class="nav navbar-nav navbar-right">
+          <li><a id="glyphicon" class="glyphicon glyphicon glyphicon-home" href="#/dashboard"></a></li>
+         <li><a id="glyphicon" class="glyphicon glyphicon-list-alt" href="#/manageTasks"></a></li>
+         <li><a id="glyphicon" class="glyphicon glyphicon-user" href="#/profile"></a></li>
+          <li><a id="glyphicon" class="glyphicon glyphicon-exclamation-sign" href="#/fandq"></a></li>
+           <li><a id="glyphicon" class="glyphicon glyphicon-log-in" data-ng-click="$event.preventDefault();logout()" href="/#"></a></li>
+         </ul>
+	   </div>
+	</div>
+</nav>
+
+<div id="successDialog" style="display:none;">
+</div>
+<div id="errorDialog" style="display:none;">
+</div>
+<div id="showTaskDialog" style="display:none;">
+</div>
+
+<!--Jumbotron with two columns-->
+<div class="jumbotron" style="background-color:#EDF2FA; height:75vh;">
+	<div class="container">
+  	  <div class="row">
+        <div class="col-md-6">
+          <form class="form-horizontal">
+			<div class="container-fluid">
+			<br>
+			<!-- Form allowing the user to enter a new task name and description -->
+      			<div class="form-group">
+          			<div class="col-md-6">
+           			<input type="text" placeholder="Input task name here" data-ng-model="taskName" class="form-control">
+          			</div>
+      			</div>
+      			<div class="form-group">
+          			<div class="col-md-12">
+           			<textarea class="form-control" placeholder="Input task decription here" data-ng-model="taskDescription" rows="8" cols="50"></textarea>
+          			</div>
+      			</div>
+      			<div class="form-group">
+          			<div class="col-md-4">
+           			<input style="background-color: #327BF0; color:white;" type="button" value="Add New Task" class="form-control" data-ng-click="addNewTask()">
+          			</div>
+      			</div>
+      	  </div>
+		</form>
+       </div>
+       <!-- Task list area using angular binding an dynamically updated when user adds a new task -->
+       <div class="col-md-6">
+          <center><h2 style="color:blue;">Task List Area</h2></center>
+          <div style="height:400px; overflow-y:scroll;">
+          <ul class="list-group">
+          <li style="font-family:Tahoma; cursor: pointer;" data-ng-dblclick="showTask($index)" class="list-group-item" data-ng-repeat="task in tasks track by $index">
+				{{ task.name }}
+		  </li>
+		  </ul>
+		  </div>
+       </div>
+     </div>
+   </div>
+</div>
+
+<!--A simple page footer-->
+<div id="footer">
+	<div class="container">
+	<center><h3 id="footerLabel">Copyright 2016 GMIT </h3></center>
+	</div>
+</div>
+</div><!--End dashboardController scope-->
+
+
